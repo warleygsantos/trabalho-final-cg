@@ -60,6 +60,13 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
+typedef struct No
+{
+    int x;
+    int y;
+    No *prox;
+} No;
+
 #define FATOR 0.1 /**< Salto do valor de escala a cada distorcao.             */
 #define ALFA 0.05 /**< Salto do valor do raio a cada rotacao.                 */
 #define JUMP 5    /**< Salto do valor de posicao a cada deslocamento.         */
@@ -80,7 +87,7 @@ using namespace std;
  * \return void
  */
 void linhaDDA(SDL_Renderer *render,
-              int xi, int yi, int xf, int yf, SDL_Color color)
+              int xi, int yi, int xf, int yf)
 {
     int dx = xf - xi;
     int dy = yf - yi;
@@ -106,6 +113,62 @@ void linhaDDA(SDL_Renderer *render,
     }
 }
 
+
+float calcula1porM(double P[][2], int L[][2], int indice)
+{
+    float deltaX = (float) (P[(L[indice][0])][0] - P[(L[indice][1])][0]);
+    float deltaY = (float) (P[(L[indice][0])][1] - P[(L[indice][1])][1]);
+
+    if(deltaY)
+        return deltaX / deltaY;
+    return 0;
+}
+
+
+void insereNo(No **cabeca, int x, int y)
+{
+    No *novo = (No *) malloc(sizeof(No));
+    novo->x = x;
+    novo->y = y;
+    novo->prox = NULL;
+
+    if(!*cabeca)
+    {
+        *cabeca = novo;
+    }
+    else if(x <= (*cabeca)->x)
+    {
+        novo->prox = *cabeca;
+        *cabeca = novo;
+    }
+    else
+    {
+        No *tmp;
+        for(tmp = *cabeca; tmp->prox != NULL && x > tmp->prox->x; tmp = tmp->prox);
+        novo->prox = tmp->prox;
+        tmp->prox = novo;
+    }
+}
+
+void esvaziaLista(No **cabeca)
+{
+    if(!*cabeca)
+    {
+        return;
+    }
+    else if((*cabeca)->prox)
+    {
+        esvaziaLista(&((*cabeca)->prox));
+        free(*cabeca);
+    }
+    else
+    {
+        free(*cabeca);
+    }
+    *cabeca = NULL;
+}
+
+
 /**
  * \brief Limpa a tela e desenha o poligno.
  * \param render Render correspondente a janela utilizada.
@@ -127,16 +190,87 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);
 
-    /* Configura a cor do poligno.                                            */
-    SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
+    bool preenche = true;
+    No *cabeca = NULL;
 
-    /* Obtem Ponto inicial e final de cada reta do poligno.                   */
-    for(i = 0; i < obj->m; ++i)
+    if(preenche)
     {
-        P1 = obj->getPonto(obj->linhas.at(i).P1, projecao);
-        P2 = obj->getPonto(obj->linhas.at(i).P2, projecao);
+        std::vector<vector<int>>::iterator it;
+        for (it = obj->faces.begin(); it != obj->faces.end(); ++it)
+        {
+            cor.r += 60;
+            cor.b += 30;
+            int L[(*it).size()][2];
+            double P[obj->pontos.size()][2];
 
-        linhaDDA(render, P1.x, P1.y, P2.x, P2.y, cor);
+            for(unsigned int i = 0; i < obj->pontos.size(); ++i)
+            {
+                P[i][0] = obj->getPonto(i, projecao).x;
+                P[i][1] = obj->getPonto(i, projecao).y;
+            }
+            unsigned int i;
+            for(i = 0; i <  (*it).size() -1; ++i)
+            {
+                L[i][0] = (*it).at(i);
+                L[i][1] = (*it).at(i + 1);
+            }
+            L[i][0] = (*it).at(i);
+            L[i][1] = (*it).at(0);
+            float tLados[(*it).size()][4];
+            for(unsigned int i = 0; i < (*it).size(); ++i)
+            {
+                //   y1 < y2
+                if(P[(L[i][0])][1] < P[(L[i][1])][1])
+                {
+                    tLados[i][0] = P[(L[i][0])][1]; //** y minimo.
+                    tLados[i][1] = P[(L[i][1])][1]; // /** y maximo.
+                    tLados[i][2] = P[(L[i][0])][0]; ///** x para y min.
+                    tLados[i][3] = calcula1porM(P, L, i);// /**  1/m
+                }
+                else
+                {
+                    tLados[i][0] = P[(L[i][1])][1]; // /** y minimo.
+                    tLados[i][1] = P[(L[i][0])][1]; ///** y maximo.
+                    tLados[i][2] = P[(L[i][1])][0]; //** x para y min.
+                    tLados[i][3] = calcula1porM(P, L, i); ///** 1/m
+                }
+            }
+
+            int yVarredura;
+            for(yVarredura = 0; yVarredura < DM.h; ++yVarredura)
+            {
+                for(int unsigned i = 0; i < (*it).size(); ++i)
+                {
+                    /* Para eliminar os lados do polígono, os quais a linha de
+                    varredura não intercepta, são verificadas as seguintes condições
+                         Yvarredura > Ymax
+                         Yvarredura < Ymi */
+                    if(yVarredura < tLados[i][0] || yVarredura > tLados[i][1])
+                    {
+                        continue;
+                    }
+                    insereNo(&cabeca,
+                             ((tLados[i][3] * (yVarredura - tLados[i][0]))) + tLados[i][2],
+                             yVarredura);
+                    if(tLados[i][1] == yVarredura)
+                    {
+                        insereNo(&cabeca,
+                                 ((tLados[i][3] * (yVarredura - tLados[i][0])) + tLados[i][2]),
+                                 yVarredura);
+                    }
+                }
+                    /* Configura a cor do poligno.                                            */
+
+                SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
+
+                No *tmp;
+                for(tmp = cabeca; tmp != NULL && tmp->prox != NULL; tmp = tmp->prox->prox)
+                {
+                    linhaDDA(render, tmp->x, tmp->y, tmp->prox->x, tmp->prox->y);
+                }
+                esvaziaLista(&cabeca);
+            }
+        }
     }
 }
 
@@ -191,13 +325,14 @@ SDL_Surface *imprimeTexto(TTF_Font *fonte, string str, SDL_Color cor)
 
 /**
  * \brief Instancia um novo objeto 3D.
+ *  APENAS O QUADRADO ABILITADO ATE MODIFICAR O FORMATO DOS OUTROS ARQUIBOS.
  */
 void changeObjeto3D(Objeto3D **obj)
 {
-    static int i = 1;
-    const char *escolha[] = { "objetos3D/quadrado.war",
-                              "objetos3D/letraA.war",
-                              "objetos3D/coracao.war"
+    static int i = 0;
+    const char *escolha[] = { "objetos3D/quadrado.war"
+                       //       "objetos3D/coracao.war",
+                         //     "objetos3D/letraA.war"
                             };
     delete *obj;
     *obj = new Objeto3D(escolha[i]);
@@ -207,7 +342,7 @@ void changeObjeto3D(Objeto3D **obj)
     (*obj)->setTranslacaoEmY(DM.h/2);
 
     ++i;
-    if(i >= 3)
+    if(i >= 1)
     {
         i = 0;
     }

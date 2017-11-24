@@ -1,4 +1,6 @@
 #include "Objeto3D.h"
+#include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -161,9 +163,10 @@ void Objeto3D::setEscalaEmZ(double fator)
 void Objeto3D::setRotacaoEmY(double alfa)
 {
     double rotacao[4][4] = { cos(alfa), 0, -sin(alfa), 0,
-                                     0, 1,          0, 0,
+                             0, 1,          0, 0,
                              sin(alfa), 0,  cos(alfa), 0,
-                                     0, 0,          0, 1 };
+                             0, 0,          0, 1
+                           };
 
     multiplica(M, rotacao, M);
 }
@@ -173,7 +176,8 @@ void Objeto3D::setRotacaoEmX(double alfa)
     double rotacao[4][4] = { 1,          0,         0, 0,
                              0,  cos(alfa), sin(alfa), 0,
                              0, -sin(alfa), cos(alfa), 0,
-                             0,          0,         0, 1 };
+                             0,          0,         0, 1
+                           };
 
     multiplica(M, rotacao, M);
 }
@@ -181,9 +185,10 @@ void Objeto3D::setRotacaoEmX(double alfa)
 void Objeto3D::setRotacaoEmZ(double alfa)
 {
     double rotacao[4][4] = { cos(alfa), sin(alfa), 0, 0,
-                            -sin(alfa), cos(alfa), 0, 0,
-                                     0,         0, 1, 0,
-                                     0,         0, 0, 1 };
+                             -sin(alfa), cos(alfa), 0, 0,
+                             0,         0, 1, 0,
+                             0,         0, 0, 1
+                           };
     multiplica(M, rotacao, M);
 }
 
@@ -192,7 +197,8 @@ void Objeto3D::setTranslacaoEmX(double jump)
     double tranlada[4][4] = { 1, 0, 0, 0,
                               0, 1, 0, 0,
                               0, 0, 1, 0,
-                           jump, 0, 0, 1 };
+                              jump, 0, 0, 1
+                            };
 
     multiplica(matrizT, tranlada, matrizT);
 }
@@ -202,7 +208,8 @@ void Objeto3D::setTranslacaoEmY(double jump)
     double tranlada[4][4] = {1, 0, 0, 0,
                              0, 1, 0, 0,
                              0, 0, 1, 0,
-                             0, jump,0, 1 };
+                             0, jump,0, 1
+                            };
     multiplica(matrizT, tranlada, matrizT);
 }
 
@@ -233,25 +240,42 @@ void Objeto3D::carregaObj(string path)
         exit(-1);
     }
 
-    file >> n; // O arquivo comeca com o numero de pontos.
-    int i;
-
-    /* As proxima n linhas do arquivo eh um ponto x, y, z.                    */
-    for(i = 0;  i < n; ++i)
-    {
-        file >> novoPonto.x >> novoPonto.y >> novoPonto.z;
-        novoPonto.m = 1;
-        pontos.push_back(novoPonto); // Insere novo ponto no final do vetor.
-    }
-
     file >> m; // O arquivo informa a quantidade de pontos.
 
     /* As proximas m linhas nao linhas que ligam os pontos P1 e P2.           */
-    for(i = 0; i < m; ++i)
+    for(int i = 0; i < m; ++i)
     {
         file >> novaLinha.P1 >> novaLinha.P2;
         linhas.push_back(novaLinha); // Insere a nova linha no final do vetor.
     }
+
+    std::string str;
+    char letra;
+    int testei;
+
+    while (std::getline(file, str))
+    {
+        std::istringstream iss(str.c_str());
+
+        iss >> letra;
+
+        if(letra == 'v')
+        {
+            iss >> novoPonto.x >> novoPonto.y >> novoPonto.z;
+            novoPonto.m = 1;
+            pontos.push_back(novoPonto);
+        }
+        else if(letra  == 'f')
+        {
+            vector<int> tmp;
+            while(iss >> testei)
+            {
+                tmp.push_back(testei);
+            }
+            faces.push_back(tmp);
+        }
+    }
+    n = pontos.size();
     file.close();
 }
 

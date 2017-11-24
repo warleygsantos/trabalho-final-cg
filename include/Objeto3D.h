@@ -29,6 +29,7 @@ public:
     int n;
     std::vector<Ponto> pontos;
     std::vector<Linha> linhas;
+    std::vector<std::vector<int>> faces;
     void setTranslacaoEmX(double);
     void setTranslacaoEmY(double);
     void setTranslacaoEmZ(double);
