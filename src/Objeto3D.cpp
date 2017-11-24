@@ -231,22 +231,12 @@ void Objeto3D::carregaObj(string path)
 {
     ifstream file;
     Ponto novoPonto; // Variavel temporaria para ler os pontos no arquivo.
-    Linha novaLinha; // Variavel temporaria para ler as linhas no arquovo.
 
     file.open(path.c_str());
     if(!file.is_open())
     {
         printf("Arquivo %s nao foi aberto!\n", path.c_str());
         exit(-1);
-    }
-
-    file >> m; // O arquivo informa a quantidade de pontos.
-
-    /* As proximas m linhas nao linhas que ligam os pontos P1 e P2.           */
-    for(int i = 0; i < m; ++i)
-    {
-        file >> novaLinha.P1 >> novaLinha.P2;
-        linhas.push_back(novaLinha); // Insere a nova linha no final do vetor.
     }
 
     std::string str;
@@ -275,7 +265,6 @@ void Objeto3D::carregaObj(string path)
             faces.push_back(tmp);
         }
     }
-    n = pontos.size();
     file.close();
 }
 

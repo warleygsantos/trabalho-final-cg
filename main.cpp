@@ -182,10 +182,6 @@ void esvaziaLista(No **cabeca)
 void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                      int projecao)
 {
-    int i;
-    Ponto P1, // Ponto inicial de uma reta.
-          P2; // Ponto final de uma reta.
-
     /* Escolhe preto como cor de fundo e limpa a tela.                        */
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);

@@ -25,8 +25,6 @@ class Objeto3D
 public:
     void multiplica(double A[4][4], double B[4][4], double out[4][4]);
     Objeto3D(std::string);
-    int m;
-    int n;
     std::vector<Ponto> pontos;
     std::vector<Linha> linhas;
     std::vector<std::vector<int>> faces;
