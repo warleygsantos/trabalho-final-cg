@@ -64,7 +64,6 @@ typedef struct No
 {
     int x;
     int y;
-    No *prox;
 } No;
 
 #define FATOR 0.1 /**< Salto do valor de escala a cada distorcao.             */
@@ -124,51 +123,6 @@ float calcula1porM(double P[][2], int L[][2], int indice)
     return 0;
 }
 
-
-void insereNo(No **cabeca, int x, int y)
-{
-    No *novo = (No *) malloc(sizeof(No));
-    novo->x = x;
-    novo->y = y;
-    novo->prox = NULL;
-
-    if(!*cabeca)
-    {
-        *cabeca = novo;
-    }
-    else if(x <= (*cabeca)->x)
-    {
-        novo->prox = *cabeca;
-        *cabeca = novo;
-    }
-    else
-    {
-        No *tmp;
-        for(tmp = *cabeca; tmp->prox != NULL && x > tmp->prox->x; tmp = tmp->prox);
-        novo->prox = tmp->prox;
-        tmp->prox = novo;
-    }
-}
-
-void esvaziaLista(No **cabeca)
-{
-    if(!*cabeca)
-    {
-        return;
-    }
-    else if((*cabeca)->prox)
-    {
-        esvaziaLista(&((*cabeca)->prox));
-        free(*cabeca);
-    }
-    else
-    {
-        free(*cabeca);
-    }
-    *cabeca = NULL;
-}
-
-
 /**
  * \brief Limpa a tela e desenha o poligno.
  * \param render Render correspondente a janela utilizada.
@@ -187,7 +141,7 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
     SDL_RenderClear(render);
 
     bool preenche = true;
-    No *cabeca = NULL;
+    vector<No> nodes;
 
     if(preenche)
     {
@@ -245,26 +199,27 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                     {
                         continue;
                     }
-                    insereNo(&cabeca,
-                             ((tLados[i][3] * (yVarredura - tLados[i][0]))) + tLados[i][2],
-                             yVarredura);
+                    No novo;
+                    novo.x = ((tLados[i][3] * (yVarredura - tLados[i][0]))) + tLados[i][2];
+                    novo.y = yVarredura;
+                    nodes.push_back(novo);
                     if(tLados[i][1] == yVarredura)
                     {
-                        insereNo(&cabeca,
-                                 ((tLados[i][3] * (yVarredura - tLados[i][0])) + tLados[i][2]),
-                                 yVarredura);
+
+                        novo.x = ((tLados[i][3] * (yVarredura - tLados[i][0])) + tLados[i][2]);
+                        novo.y = yVarredura;
+                        nodes.push_back(novo);
                     }
                 }
                     /* Configura a cor do poligno.                                            */
 
                 SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
 
-                No *tmp;
-                for(tmp = cabeca; tmp != NULL && tmp->prox != NULL; tmp = tmp->prox->prox)
+                for(unsigned int i = 1; i < nodes.size(); ++i)
                 {
-                    linhaDDA(render, tmp->x, tmp->y, tmp->prox->x, tmp->prox->y);
+                    linhaDDA(render, nodes.at(i - 1).x, nodes.at(i - 1).y, nodes.at(i).x, nodes.at(i).y);
                 }
-                esvaziaLista(&cabeca);
+                nodes.clear();
             }
         }
     }
