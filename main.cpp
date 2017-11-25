@@ -212,9 +212,7 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                     }
                 }
                     /* Configura a cor do poligno.                                            */
-
                 SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
-
                 for(unsigned int i = 1; i < nodes.size(); ++i)
                 {
                     linhaDDA(render, nodes.at(i - 1).x, nodes.at(i - 1).y, nodes.at(i).x, nodes.at(i).y);

@@ -239,14 +239,13 @@ void Objeto3D::carregaObj(string path)
         exit(-1);
     }
 
-    std::string str;
+    std::string entrada;
     char letra;
-    int testei;
+    int indiceVertice;
 
-    while (std::getline(file, str))
+    while (std::getline(file, entrada))
     {
-        std::istringstream iss(str.c_str());
-
+        std::istringstream iss(entrada.c_str());
         iss >> letra;
 
         if(letra == 'v')
@@ -257,12 +256,12 @@ void Objeto3D::carregaObj(string path)
         }
         else if(letra  == 'f')
         {
-            vector<int> tmp;
-            while(iss >> testei)
+            vector<int> novaFace;
+            while(iss >> indiceVertice)
             {
-                tmp.push_back(testei);
+                novaFace.push_back(indiceVertice);
             }
-            faces.push_back(tmp);
+            faces.push_back(novaFace);
         }
     }
     file.close();
