@@ -6,25 +6,6 @@ using namespace std;
 
 typedef void (Projecao)(Ponto *);
 
-void Objeto3D::multiplica(double A[4][4], double B[4][4], double out[4][4])
-{
-    double mat[4][4];
-    int i, j, k;
-
-    for(i = 0; i < 4; ++i)
-        for(j = 0; j < 4; ++j)
-            mat[i][j] = 0;
-
-    for(i = 0; i < 4; ++i)
-        for(j = 0; j < 4; ++j)
-            for(k = 0; k < 4; ++k)
-                mat[i][j] += A[i][k] * B[j][k];
-
-    for(i = 0; i < 4; ++i)
-        for(j = 0; j < 4; ++j)
-            out[i][j] = mat[i][j];
-}
-
 /**
  * \brief Realiza a projecao Cavaleira.
  * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
@@ -84,18 +65,7 @@ void fugaZ(Ponto *ponto)
  */
 void fugaXZ(Ponto *ponto)
 {
-    double z = 1 - (ponto->z / 20);
-    double x = 1 - (ponto->x / 20);
-    double v[2];
 
-    v[0] = (ponto->x) / z;
-    v[1] = (ponto->y) / z;
-
-    v[1] += (ponto->y) / x;
-    v[0] += (ponto->x) / x;
-
-    ponto->x = v[0];
-    ponto->y = v[1];
 }
 
 /* Vetor de ponteira para as funcoes de projecaol.                            */
@@ -132,16 +102,16 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     ponto.z = (v[0] * M[2][0]) + (v[1] * M[2][1]) + (v[2] * M[2][2]) + (v[3] * M[2][3]);
     ponto.m = (v[0] * M[3][0]) + (v[1] * M[3][1]) + (v[2] * M[3][2]) + (v[3] * M[3][3]);
 
-    ponto.x += matrizT[0][3];
-    ponto.y += matrizT[1][3];
-    ponto.z += matrizT[2][3];
-
-    projeta(&ponto, vetor[iProjecao]);
-
     ponto.x /= ponto.m;
     ponto.y /= ponto.m;
     ponto.z /= ponto.m;
 
+    ponto.x += transladaX;
+    ponto.y += transladaY;
+    ponto.z += transladaZ;
+
+    ponto.y = ponto.y;
+    projeta(&ponto, vetor[iProjecao]);
     return ponto;
 }
 
@@ -162,65 +132,60 @@ void Objeto3D::setEscalaEmZ(double fator)
 
 void Objeto3D::setRotacaoEmY(double alfa)
 {
-    double rotacao[4][4] = { cos(alfa), 0, -sin(alfa), 0,
-                             0, 1,          0, 0,
-                             sin(alfa), 0,  cos(alfa), 0,
-                             0, 0,          0, 1
-                           };
+    double v[3];
 
-    multiplica(M, rotacao, M);
+    for(unsigned int i = 0; i < pontos.size(); ++i)
+    {
+        v[0] = (pontos[i].x * cos(alfa)) + (pontos[i].z * sin(alfa));
+        v[2] = ((pontos[i].x * sin(alfa)) * -1) + (pontos[i].z * cos(alfa));
+
+        pontos[i].x = v[0];
+        pontos[i].z = v[2];
+    }
 }
 
 void Objeto3D::setRotacaoEmX(double alfa)
 {
-    double rotacao[4][4] = { 1,          0,         0, 0,
-                             0,  cos(alfa), sin(alfa), 0,
-                             0, -sin(alfa), cos(alfa), 0,
-                             0,          0,         0, 1
-                           };
+    double v[3];
 
-    multiplica(M, rotacao, M);
+    for(unsigned int i = 0; i < pontos.size(); ++i)
+    {
+        v[1] = pontos[i].y * cos(alfa) + (pontos[i].z * -sin(alfa));
+        v[2] = (pontos[i].y * sin(alfa)) + (pontos[i].z * cos(alfa));
+
+        pontos[i].y = v[1];
+        pontos[i].z = v[2];
+    }
 }
 
 void Objeto3D::setRotacaoEmZ(double alfa)
 {
-    double rotacao[4][4] = { cos(alfa), sin(alfa), 0, 0,
-                             -sin(alfa), cos(alfa), 0, 0,
-                             0,         0, 1, 0,
-                             0,         0, 0, 1
-                           };
-    multiplica(M, rotacao, M);
+
+    double v[3];
+
+    for(unsigned int i = 0; i < pontos.size(); ++i)
+    {
+        v[0] = pontos[i].x * cos(alfa) + (pontos[i].y * -sin(alfa));
+        v[1] = (pontos[i].x * sin(alfa)) + (pontos[i].y * cos(alfa));
+
+        pontos[i].x = v[0];
+        pontos[i].y = v[1];
+    }
 }
 
 void Objeto3D::setTranslacaoEmX(double jump)
 {
-    double tranlada[4][4] = { 1, 0, 0, 0,
-                              0, 1, 0, 0,
-                              0, 0, 1, 0,
-                              jump, 0, 0, 1
-                            };
-
-    multiplica(matrizT, tranlada, matrizT);
+    transladaX += jump;
 }
 
 void Objeto3D::setTranslacaoEmY(double jump)
 {
-    double tranlada[4][4] = {1, 0, 0, 0,
-                             0, 1, 0, 0,
-                             0, 0, 1, 0,
-                             0, jump,0, 1
-                            };
-    multiplica(matrizT, tranlada, matrizT);
+    transladaY += jump;
 }
 
 void Objeto3D::setTranslacaoEmZ(double jump)
 {
-    double tranlada[4][4] = {1, 0, 0, 0,
-                             0, 1, 0, 0,
-                             0, 0, 1, 0,
-                             0, 0, jump, 1
-                            };
-    multiplica(matrizT, tranlada, matrizT);
+    transladaZ += jump;
 }
 
 /**

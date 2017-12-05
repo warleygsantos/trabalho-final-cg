@@ -44,10 +44,9 @@ public:
                            0, 0, 1, 0,
                            0, 0, 0, 1};
 
-    double matrizT[4][4] = {1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1};
+    double transladaX = 0;
+    double transladaY = 0;
+    double transladaZ = 0;
 protected:
 
 private:

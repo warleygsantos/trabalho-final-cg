@@ -49,6 +49,7 @@
 #include <iostream>
 #include <Objeto3D.h>
 #include <array>
+#include <string>
 
 #ifdef _WIN32
 #include <SDL.h>
@@ -86,22 +87,22 @@ using namespace std;
  * \return void
  */
 void linhaDDA(SDL_Renderer *render,
-              int xi, int yi, int xf, int yf)
+              double xi, double yi, double xf, double yf)
 {
-    int dx = xf - xi;
-    int dy = yf - yi;
+    double dx = xf - xi;
+    double dy = yf - yi;
     int steps;
     int k;
-    float incWIDTH, incHEIGHT;
-    float x = xi;
-    float y = yi;
+    double incWIDTH, incHEIGHT;
+    double x = xi;
+    double y = yi;
 
     if(abs(dx) > abs(dy))
         steps = abs(dx);
     else steps = abs(dy);
 
-    incWIDTH = dx / (float) steps;
-    incHEIGHT = dy / (float) steps;
+    incWIDTH = dx / (double) steps;
+    incHEIGHT = dy / (double) steps;
 
     SDL_RenderDrawPoint(render, x, y);
     for(k = 0; k < steps; ++k)
@@ -112,11 +113,37 @@ void linhaDDA(SDL_Renderer *render,
     }
 }
 
-
-float calcula1porM(double P[][2], int L[][2], int indice)
+void mostraNumero(SDL_Renderer *render, SDL_Color cor, string num, Ponto ponto)
 {
-    float deltaX = (float) (P[(L[indice][0])][0] - P[(L[indice][1])][0]);
-    float deltaY = (float) (P[(L[indice][0])][1] - P[(L[indice][1])][1]);
+    TTF_Font *fonte = TTF_OpenFont(fonteName, 15);
+    if(!fonte)
+    {
+        printf("Nao foi possivel abrir a fonte: %s\n", fonteName);
+        exit(-1);
+    }
+    cor.r = 150;
+    cor.g = 150;
+    cor.b = 150;
+
+    /* Escreve o nome da projecao em uma surface s.
+     * Cria uma textura apartir da surface s.
+     * Copia a textura para o render no canto superior direito da tela.
+     */
+    SDL_Surface *s = TTF_RenderText_Solid(fonte, num.c_str(), cor);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
+    SDL_Rect rect = {(int) ponto.x, (int) ponto.y, s->w, s->h};
+    SDL_RenderCopy(render, texture, NULL, &rect);
+
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(s);
+    TTF_CloseFont(fonte);
+}
+
+
+double calcula1porM(double P[][2], int L[][2], int indice)
+{
+    double deltaX = (double) (P[(L[indice][0])][0] - P[(L[indice][1])][0]);
+    double deltaY = (double) (P[(L[indice][0])][1] - P[(L[indice][1])][1]);
 
     if(deltaY)
         return deltaX / deltaY;
@@ -145,11 +172,24 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
 
     if(preenche)
     {
+        int c = 0;
         std::vector<vector<int>>::iterator it;
-        for (it = obj->faces.begin(); it != obj->faces.end(); ++it)
+        for (it = obj->faces.begin(); it != obj->faces.end(); ++it, ++c)
         {
-            cor.r += 60;
-            cor.b += 30;
+            Ponto P1 = obj->getPonto((*it).at(0), projecao);
+            Ponto P2 = obj->getPonto((*it).at(1), projecao);
+            Ponto P3 = obj->getPonto((*it).at(2), projecao);
+
+            Ponto d1, d2;
+
+            d1.x = P3.x - P1.x;
+            d1.y = P3.y - P1.y;
+            d2.x = P3.x - P2.x;
+            d2.y = P3.y - P2.y;
+
+            if ((d1.x * d2.y) - (d1.y * d2.x) < (double) 0)
+                continue;
+
             int L[(*it).size()][2];
             double P[obj->pontos.size()][2];
 
@@ -166,7 +206,7 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
             }
             L[i][0] = (*it).at(i);
             L[i][1] = (*it).at(0);
-            float tLados[(*it).size()][4];
+            double tLados[(*it).size()][4];
             for(unsigned int i = 0; i < (*it).size(); ++i)
             {
                 //   y1 < y2
@@ -193,8 +233,8 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                 {
                     /* Para eliminar os lados do polígono, os quais a linha de
                     varredura não intercepta, são verificadas as seguintes condições
-                         Yvarredura > Ymax
-                         Yvarredura < Ymi */
+                        Yvarredura > Ymax
+                        Yvarredura < Ymi */
                     if(yVarredura < tLados[i][0] || yVarredura > tLados[i][1])
                     {
                         continue;
@@ -205,13 +245,49 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                     nodes.push_back(novo);
                     if(tLados[i][1] == yVarredura)
                     {
-
                         novo.x = ((tLados[i][3] * (yVarredura - tLados[i][0])) + tLados[i][2]);
                         novo.y = yVarredura;
                         nodes.push_back(novo);
                     }
                 }
-                    /* Configura a cor do poligno.                                            */
+                if(c == 0)
+                {
+                    cor.r = 0;
+                    cor.g = 255;
+                    cor.b = 0;
+                }
+                else if(c == 1)
+                {
+                    cor.r = 255;
+                    cor.g = 0;
+                    cor.b = 0;
+                }
+                else if(c == 2)
+                {
+                    cor.r = 255;
+                    cor.g = 118;
+                    cor.b = 7;
+                }
+                else if(c == 3)
+                {
+                    cor.r = 0;
+                    cor.g = 0;
+                    cor.b = 255;
+                }
+                else if(c == 4)
+                {
+                    cor.r = 255;
+                    cor.g = 255;
+                    cor.b = 255;
+                }
+                else if(c == 5)
+                {
+                    cor.r = 255;
+                    cor.g = 255;
+                    cor.b = 0;
+                }
+
+                /* Configura a cor do poligno.                                            */
                 SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
                 for(unsigned int i = 1; i < nodes.size(); ++i)
                 {
@@ -221,8 +297,22 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
             }
         }
     }
+    std::vector<vector<int>>::iterator it;
+    SDL_SetRenderDrawColor(render, 100, 100, 100, 255);
+    for (it = obj->faces.begin(); it != obj->faces.end(); ++it)
+    {
+        for(unsigned int j = 1; j < (*it).size(); ++j)
+        {
+            Ponto p1 = obj->getPonto((*it).at(j - 1), projecao);
+            Ponto p2 = obj->getPonto((*it).at(j), projecao);
+          //  linhaDDA(render, p1.x, p1.y, p2.x, p2.y);
+        }
+    }
+    for(unsigned int i = 0; i < obj->pontos.size(); ++i)
+    {
+      //  mostraNumero(render, cor, std::to_string(i), obj->getPonto(i, projecao));
+    }
 }
-
 /**
  * \brief Retorna uma surface com a string.
  * \param fonte Fonte do texto a ser escrito.
@@ -280,8 +370,8 @@ void changeObjeto3D(Objeto3D **obj)
 {
     static int i = 0;
     const char *escolha[] = { "objetos3D/quadrado.war"
-                       //       "objetos3D/coracao.war",
-                         //     "objetos3D/letraA.war"
+                              //       "objetos3D/coracao.war",
+                              //     "objetos3D/letraA.war"
                             };
     delete *obj;
     *obj = new Objeto3D(escolha[i]);
@@ -571,6 +661,7 @@ int main(int argc, char *argv[])
 
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
+
 
     /* Cria a mensagem de ajuda.                                              */
     SDL_Surface *ajuda = criaAjuda();
