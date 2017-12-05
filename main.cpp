@@ -297,21 +297,6 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
             }
         }
     }
-    std::vector<vector<int>>::iterator it;
-    SDL_SetRenderDrawColor(render, 100, 100, 100, 255);
-    for (it = obj->faces.begin(); it != obj->faces.end(); ++it)
-    {
-        for(unsigned int j = 1; j < (*it).size(); ++j)
-        {
-            Ponto p1 = obj->getPonto((*it).at(j - 1), projecao);
-            Ponto p2 = obj->getPonto((*it).at(j), projecao);
-          //  linhaDDA(render, p1.x, p1.y, p2.x, p2.y);
-        }
-    }
-    for(unsigned int i = 0; i < obj->pontos.size(); ++i)
-    {
-      //  mostraNumero(render, cor, std::to_string(i), obj->getPonto(i, projecao));
-    }
 }
 /**
  * \brief Retorna uma surface com a string.
