@@ -160,13 +160,8 @@ double calcula1porM(double P[][2], int L[][2], int indice)
  * \see linhaDDA
  * \return void
  */
-void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
-                     int projecao)
+void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao)
 {
-    /* Escolhe preto como cor de fundo e limpa a tela.                        */
-    SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
-    SDL_RenderClear(render);
-
     bool preenche = true;
     vector<No> nodes;
 
@@ -176,6 +171,8 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
         std::vector<vector<int>>::iterator it;
         for (it = obj->faces.begin(); it != obj->faces.end(); ++it, ++c)
         {
+
+            /*-----------------------Esconde face-----------------------------*/
             Ponto P1 = obj->getPonto((*it).at(0), projecao);
             Ponto P2 = obj->getPonto((*it).at(1), projecao);
             Ponto P3 = obj->getPonto((*it).at(2), projecao);
@@ -190,6 +187,13 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
             if ((d1.x * d2.y) - (d1.y * d2.x) < (double) 0)
                 continue;
 
+            /*-----------------------Le a cor da face-------------------------*/
+            Cor cor= obj->cores[c];
+
+            /* Configura a cor do poligno.                                    */
+            SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, 0);
+
+            /*-----------------------desenha a face---------------------------*/
             int L[(*it).size()][2];
             double P[obj->pontos.size()][2];
 
@@ -250,45 +254,7 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, SDL_Color cor,
                         nodes.push_back(novo);
                     }
                 }
-                if(c == 0)
-                {
-                    cor.r = 0;
-                    cor.g = 255;
-                    cor.b = 0;
-                }
-                else if(c == 1)
-                {
-                    cor.r = 255;
-                    cor.g = 0;
-                    cor.b = 0;
-                }
-                else if(c == 2)
-                {
-                    cor.r = 255;
-                    cor.g = 118;
-                    cor.b = 7;
-                }
-                else if(c == 3)
-                {
-                    cor.r = 0;
-                    cor.g = 0;
-                    cor.b = 255;
-                }
-                else if(c == 4)
-                {
-                    cor.r = 255;
-                    cor.g = 255;
-                    cor.b = 255;
-                }
-                else if(c == 5)
-                {
-                    cor.r = 255;
-                    cor.g = 255;
-                    cor.b = 0;
-                }
 
-                /* Configura a cor do poligno.                                            */
-                SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, cor.a);
                 for(unsigned int i = 1; i < nodes.size(); ++i)
                 {
                     linhaDDA(render, nodes.at(i - 1).x, nodes.at(i - 1).y, nodes.at(i).x, nodes.at(i).y);
@@ -416,8 +382,7 @@ void SProjecao(SDL_Renderer *render, int i)
  * \return False caso o usuario deseja fechar o programa. True continua.
  */
 bool handleEventKey(
-    SDL_Event *event, Objeto3D **obj, SDL_Renderer *render,
-    SDL_Color cor, SDL_Surface *ajuda)
+    SDL_Event *event, Objeto3D **obj, SDL_Renderer *render, SDL_Surface *ajuda)
 {
     /* Permite combinaçao de teclas. True: SPACE precionado.                  */
     static bool spaceIsDown = false;
@@ -553,8 +518,11 @@ bool handleEventKey(
     }
     else return true; /* Nao atualiza a tela se caiu em uma das condicoes     */
 
+    /* Escolhe preto como cor de fundo e limpa a tela.                        */
+    SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
+    SDL_RenderClear(render);
     /* Desenha o objeto 3D na tela.                                           */
-    desenhaPoligono(render, *obj, cor, iProjecao);
+    desenhaPoligono(render, *obj, iProjecao);
 
     /* Mostra a ajuda por cima do desenho.                                    */
     if(mostraAjuda)
@@ -622,9 +590,6 @@ int main(int argc, char *argv[])
     /* Obtem as medidas de tamanho da tela.                                   */
     SDL_GetCurrentDisplayMode(0, &DM);
 
-    /* Cor do poligno.                                                        */
-    SDL_Color cor = {0, 255, 0, 255};
-
     /* Instancia um objeto 3D e o posiciona perto do centro da tela.          */
     Objeto3D *obj = new Objeto3D("objetos3D/quadrado.war");
     obj->setTranslacaoEmX(DM.w/2);
@@ -639,14 +604,12 @@ int main(int argc, char *argv[])
                            SDL_RENDERER_ACCELERATED);
 
     /* Desenha o poligno e renderiza.                                         */
-    desenhaPoligono(render, obj, cor, 0);
-
+    desenhaPoligono(render, obj, 0);
     /* Escreve qual projecao esta sendo usada. Defaul: Cavaleira.             */
     SProjecao(render, 0);
 
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
-
 
     /* Cria a mensagem de ajuda.                                              */
     SDL_Surface *ajuda = criaAjuda();
@@ -665,10 +628,10 @@ int main(int argc, char *argv[])
                 running = false;
                 break;
             case SDL_KEYDOWN: // Eventos de precionar tecla.
-                running = handleEventKey(&event, &obj, render, cor, ajuda);
+                running = handleEventKey(&event, &obj, render, ajuda);
                 break;
             case SDL_KEYUP: // Eventosde soltar tecla.
-                running = handleEventKey(&event, &obj, render, cor, ajuda);
+                running = handleEventKey(&event, &obj, render, ajuda);
                 break;
             }
         }

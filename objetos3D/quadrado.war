@@ -12,3 +12,9 @@ f 5 0 3 6 // esquerda - Laranjado
 f 4 5 6 7 // costas - azul
 f 3 2 7 6 // cima - branco
 f 5 4 1 0 // baixo - amarelo
+c 0 255 0
+c 255 0 0
+c 255 118 7
+c 0 0 255
+c 255 255 255
+c 255 255 0

@@ -196,6 +196,7 @@ void Objeto3D::carregaObj(string path)
 {
     ifstream file;
     Ponto novoPonto; // Variavel temporaria para ler os pontos no arquivo.
+    Cor novaCor;
 
     file.open(path.c_str());
     if(!file.is_open())
@@ -227,6 +228,11 @@ void Objeto3D::carregaObj(string path)
                 novaFace.push_back(indiceVertice);
             }
             faces.push_back(novaFace);
+        }
+        else if(letra == 'c')
+        {
+            iss >> novaCor.r >> novaCor.g >> novaCor.b;
+            cores.push_back(novaCor);
         }
     }
     file.close();

@@ -16,9 +16,16 @@ typedef struct Ponto
 
 typedef struct Linha
 {
-    int P1;
-    int P2;
+    unsigned int P1;
+    unsigned int P2;
 } Linha;
+
+typedef struct Cor
+{
+    unsigned int r;
+    unsigned int g;
+    unsigned int b;
+}Cor;
 
 class Objeto3D
 {
@@ -28,6 +35,7 @@ public:
     std::vector<Ponto> pontos;
     std::vector<Linha> linhas;
     std::vector<std::vector<int>> faces;
+    std::vector<Cor> cores;
     void setTranslacaoEmX(double);
     void setTranslacaoEmY(double);
     void setTranslacaoEmZ(double);
