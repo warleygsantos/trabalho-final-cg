@@ -293,8 +293,8 @@ SDL_Surface *imprimeTexto(TTF_Font *fonte, string str, SDL_Color cor)
     }
 
     /* Surface de saida para o texto.                                          */
-    SDL_Surface *sText = SDL_CreateRGBSurfaceWithFormat(0, DM.w, DM.h, 32,
-                         SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface *sText = SDL_CreateRGBSurface(0, DM.w, DM.h, 32,
+                         0, 0, 0, 0);
 
     /* Surface temporaria.                                                    */
     SDL_Surface *sTemp = NULL;
