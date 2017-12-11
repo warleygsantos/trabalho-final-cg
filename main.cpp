@@ -97,9 +97,9 @@ void linhaDDA(SDL_Renderer *render,
     double x = xi;
     double y = yi;
 
-    if(abs(dx) > abs(dy))
-        steps = abs(dx);
-    else steps = abs(dy);
+    if(fabs(dx) > fabs(dy))
+        steps = fabs(dx);
+    else steps = fabs(dy);
 
     incWIDTH = dx / (double) steps;
     incHEIGHT = dy / (double) steps;
