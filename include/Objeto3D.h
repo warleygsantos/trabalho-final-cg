@@ -47,10 +47,10 @@ public:
     void setEscalaEmZ(double);
     Ponto getPonto(int, int);
     virtual ~Objeto3D();
-    double M[4][4] = {1, 0, 0, 0,
-                           0, 1, 0, 0,
-                           0, 0, 1, 0,
-                           0, 0, 0, 1};
+    double M[4][4] = {{1, 0, 0, 0},
+                           {0, 1, 0, 0},
+                           {0, 0, 1, 0},
+                           {0, 0, 0, 1}};
 
     double transladaX = 0;
     double transladaY = 0;
