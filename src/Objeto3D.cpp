@@ -117,10 +117,10 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     v[2] = pontos.at(indice).z;
     v[3] = pontos.at(indice).m;
 
-    ponto.x = (v[0] * M[0][0]) + (v[1] * M[0][1]) + (v[2] * M[0][2]) + (v[3] * M[0][3]);
-    ponto.y = (v[0] * M[1][0]) + (v[1] * M[1][1]) + (v[2] * M[1][2]) + (v[3] * M[1][3]);
-    ponto.z = (v[0] * M[2][0]) + (v[1] * M[2][1]) + (v[2] * M[2][2]) + (v[3] * M[2][3]);
-    ponto.m = (v[0] * M[3][0]) + (v[1] * M[3][1]) + (v[2] * M[3][2]) + (v[3] * M[3][3]);
+    ponto.x = (v[0] * mEscala[0][0]) + (v[1] * mEscala[0][1]) + (v[2] * mEscala[0][2]) + (v[3] * mEscala[0][3]);
+    ponto.y = (v[0] * mEscala[1][0]) + (v[1] * mEscala[1][1]) + (v[2] * mEscala[1][2]) + (v[3] * mEscala[1][3]);
+    ponto.z = (v[0] * mEscala[2][0]) + (v[1] * mEscala[2][1]) + (v[2] * mEscala[2][2]) + (v[3] * mEscala[2][3]);
+    ponto.m = (v[0] * mEscala[3][0]) + (v[1] * mEscala[3][1]) + (v[2] * mEscala[3][2]) + (v[3] * mEscala[3][3]);
 
     ponto.x /= ponto.m;
     ponto.y /= ponto.m;
@@ -137,17 +137,17 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
 
 void Objeto3D::setEscalaEmX(double fator)
 {
-    M[0][0] += fator;
+    mEscala[0][0] += fator;
 }
 
 void Objeto3D::setEscalaEmY(double fator)
 {
-    M[1][1] += fator;
+    mEscala[1][1] += fator;
 }
 
 void Objeto3D::setEscalaEmZ(double fator)
 {
-    M[2][2] += fator;
+    mEscala[2][2] += fator;
 }
 
 void Objeto3D::setRotacaoEmY(double alfa)
