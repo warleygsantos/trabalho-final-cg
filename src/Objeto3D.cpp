@@ -6,6 +6,26 @@ using namespace std;
 
 typedef void (Projecao)(Ponto *);
 
+void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
+{
+    int i, j, k;
+    double aux;
+
+    for(i = 0; i < ma; ++i)
+    {
+        for(j = 0; j < mb; ++j)
+        {
+            C[i][j] = 0;
+            for(k = 0;  k < 4; ++k)
+            {
+                aux += A[i][k] * B[k][j];
+            }
+            C[i][j] = aux;
+            aux = 0;
+        }
+    }
+}
+
 /**
  * \brief Realiza a projecao Cavaleira.
  * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
