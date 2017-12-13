@@ -133,7 +133,6 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     ponto.y += Ty;
     ponto.z += Tz;
 
-    ponto.y = ponto.y;
     projeta(&ponto, vetor[iProjecao]);
     return ponto;
 }
