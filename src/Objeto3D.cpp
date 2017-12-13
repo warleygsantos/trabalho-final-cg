@@ -60,17 +60,22 @@ void cabinet(Ponto *ponto)
  */
 void isometrica(Ponto *ponto)
 {
-    double v[4];
-    v[0] = ponto->x;
-    v[1] = ponto->y;
-    v[2] = ponto->z;
-    v[3] = ponto->m;
+    double v[1][4];
+    double matriz[4][4] = {{0.707,  0.408, 0.000, 0.000},
+                           {0.000,  0.816, 0.000, 0.000},
+                           {0.707, -0.408, 0.000, 0.000},
+                           {0.000,  0.000, 0.000, 1.000}};
+    v[0][0] = ponto->x;
+    v[0][1] = ponto->y;
+    v[0][2] = ponto->z;
+    v[0][3] = ponto->m;
 
-    v[0] = (ponto->x + ponto->z) * 0.707;
-    v[1] = (ponto->x * 0.408) + (ponto->y * 0.816) + (ponto->z * -0.408);
+    multMatriz(v, 1, matriz, 4, v);
 
-    ponto->x = v[0];
-    ponto->y = v[1];
+    ponto->x = v[0][0];
+    ponto->y = v[0][1];
+    ponto->z = v[0][2];
+    ponto->m = v[0][3];
 }
 
 /**
