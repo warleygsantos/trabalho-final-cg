@@ -118,6 +118,13 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     v[0][2] = pontos.at(indice).z;
     v[0][3] = pontos.at(indice).m;
 
+    multMatriz(v, 1, mRotacao, 4, v2);
+
+    v[0][0] = v2[0][0];
+    v[0][1] = v2[0][1];
+    v[0][2] = v2[0][2];
+    v[0][3] = v2[0][3];
+
     multMatriz(v, 1, mEscala, 4, v2);
 
     ponto.x = v2[0][0];
@@ -169,7 +176,22 @@ void Objeto3D::setRotacaoEmY(double alfa)
 void Objeto3D::setRotacaoEmX(double alfa)
 {
     double v[3];
+    int i, j;
+    double mat[4][4] = {{1, 0, 0, 0},
+                        {0, cos(alfa), sin(alfa), 0},
+                        {0, -sin(alfa), cos(alfa), 0},
+                        {0, 0, 0, 1}};
 
+    double tmp[4][4];
+    multMatriz(mRotacao, 4, mat, 4, tmp);
+    for(i = 0; i < 4; ++i)
+    {
+        for(j = 0; j < 4; ++j){
+            mRotacao[i][j] = tmp[i][j];
+        }
+    }
+
+    /*
     for(unsigned int i = 0; i < pontos.size(); ++i)
     {
         v[1] = pontos[i].y * cos(alfa) + (pontos[i].z * -sin(alfa));
@@ -178,16 +200,13 @@ void Objeto3D::setRotacaoEmX(double alfa)
         pontos[i].y = v[1];
         pontos[i].z = v[2];
     }
+    */
 }
 
 void Objeto3D::setRotacaoEmZ(double alfa)
 {
 
     double v[3];
-    double mat[4][4] = {{1, 0, 0, 0},
-                        {0, cos(alfa), sin(alfa), 0},
-                        {0, -sin(alfa), cos(alfa), 0},
-                        {0, 0, 0, 1}};
 
     for(unsigned int i = 0; i < pontos.size(); ++i)
     {
