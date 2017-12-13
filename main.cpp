@@ -48,6 +48,7 @@
 
 #include <iostream>
 #include <Objeto3D.h>
+#include <ColorSystem.h>
 #include <array>
 #include <string>
 
@@ -189,6 +190,20 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao)
 
             /*-----------------------Le a cor da face-------------------------*/
             Cor cor= obj->cores[c];
+
+            RGB nrgb;
+            nrgb.r = cor.r;
+            nrgb.b = cor.b;
+            nrgb.g = cor.g;
+
+            HSV nhsv = rgb2hsv(nrgb);
+
+            //nhsv.v  = 255;
+
+            nrgb = hsv2rgb(nhsv);
+            cor.r = nrgb.r;
+            cor.g = nrgb.g;
+            cor.b = nrgb.b;
 
             /* Configura a cor do poligno.                                    */
             SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, 0);
