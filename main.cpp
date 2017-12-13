@@ -46,11 +46,12 @@
  *  Sx, Sy, Sz: fator de escala do objeto no sistema de referência do universo.
  ******************************************************************************/
 
+ #include <array>
+#include <string>
 #include <iostream>
+
 #include <Objeto3D.h>
 #include <ColorSystem.h>
-#include <array>
-#include <string>
 #include <Draw.h>
 
 #ifdef _WIN32
