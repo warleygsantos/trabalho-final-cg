@@ -110,17 +110,20 @@ void projeta(Ponto *ponto, Projecao projecao)
 Ponto Objeto3D::getPonto(int indice, int iProjecao)
 {
     Ponto ponto;
-    double v[4];
+    double v[1][4];
+    double v2[1][4];
 
-    v[0] = pontos.at(indice).x;
-    v[1] = pontos.at(indice).y;
-    v[2] = pontos.at(indice).z;
-    v[3] = pontos.at(indice).m;
+    v[0][0] = pontos.at(indice).x;
+    v[0][1] = pontos.at(indice).y;
+    v[0][2] = pontos.at(indice).z;
+    v[0][3] = pontos.at(indice).m;
 
-    ponto.x = (v[0] * mEscala[0][0]) + (v[1] * mEscala[0][1]) + (v[2] * mEscala[0][2]) + (v[3] * mEscala[0][3]);
-    ponto.y = (v[0] * mEscala[1][0]) + (v[1] * mEscala[1][1]) + (v[2] * mEscala[1][2]) + (v[3] * mEscala[1][3]);
-    ponto.z = (v[0] * mEscala[2][0]) + (v[1] * mEscala[2][1]) + (v[2] * mEscala[2][2]) + (v[3] * mEscala[2][3]);
-    ponto.m = (v[0] * mEscala[3][0]) + (v[1] * mEscala[3][1]) + (v[2] * mEscala[3][2]) + (v[3] * mEscala[3][3]);
+    multMatriz(v, 1, mEscala, 4, v2);
+
+    ponto.x = v2[0][0];
+    ponto.y = v2[0][1];
+    ponto.z = v2[0][2];
+    ponto.m = v2[0][3];
 
     ponto.x /= ponto.m;
     ponto.y /= ponto.m;
