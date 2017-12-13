@@ -47,22 +47,10 @@ public:
     void setEscalaEmZ(double);
     Ponto getPonto(int, int);
     virtual ~Objeto3D();
-    double mEscala[4][4] = {{1, 0, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 0, 1, 0},
-                           {0, 0, 0, 1}};
-    double mRotacao[4][4] = {{1, 0, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 0, 1, 0},
-                           {0, 0, 0, 1}};
-    double mRotacaoY[4][4] = {{1, 0, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 0, 1, 0},
-                           {0, 0, 0, 1}};
-        double mRotacaoZ[4][4] = {{1, 0, 0, 0},
-                           {0, 1, 0, 0},
-                           {0, 0, 1, 0},
-                           {0, 0, 0, 1}};
+    double mTransformacoes[4][4] = {{1, 0, 0, 0},
+                                    {0, 1, 0, 0},
+                                    {0, 0, 1, 0},
+                                    {0, 0, 0, 1}};
 
     double Tx = 0;
     double Ty = 0;

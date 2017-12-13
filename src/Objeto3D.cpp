@@ -115,26 +115,18 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
 {
     Ponto ponto;
     double v[1][4];
-    double v2[1][4];
 
     v[0][0] = pontos.at(indice).x;
     v[0][1] = pontos.at(indice).y;
     v[0][2] = pontos.at(indice).z;
     v[0][3] = pontos.at(indice).m;
 
-    multMatriz(v, 1, mRotacao, 4, v);
+    multMatriz(v, 1, mTransformacoes, 4, v);
 
-  /*  v[0][0] = v2[0][0];
-    v[0][1] = v2[0][1];
-    v[0][2] = v2[0][2];
-    v[0][3] = v2[0][3]; */
-
-    multMatriz(v, 1, mEscala, 4, v2);
-
-    ponto.x = v2[0][0];
-    ponto.y = v2[0][1];
-    ponto.z = v2[0][2];
-    ponto.m = v2[0][3];
+    ponto.x = v[0][0];
+    ponto.y = v[0][1];
+    ponto.z = v[0][2];
+    ponto.m = v[0][3];
 
     ponto.x /= ponto.m;
     ponto.y /= ponto.m;
@@ -150,17 +142,17 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
 
 void Objeto3D::setEscalaEmX(double fator)
 {
-    mEscala[0][0] += fator;
+    mTransformacoes[0][0] += fator;
 }
 
 void Objeto3D::setEscalaEmY(double fator)
 {
-    mEscala[1][1] += fator;
+    mTransformacoes[1][1] += fator;
 }
 
 void Objeto3D::setEscalaEmZ(double fator)
 {
-    mEscala[2][2] += fator;
+    mTransformacoes[2][2] += fator;
 }
 
 void Objeto3D::setRotacaoEmY(double alfa)
@@ -171,7 +163,7 @@ void Objeto3D::setRotacaoEmY(double alfa)
                         {sin(alfa), 0,  cos(alfa), 0},
                         {        0, 0,          0, 1}};
 
-    multMatriz(mRotacao, 4, mat, 4, mRotacao);
+    multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
 
 void Objeto3D::setRotacaoEmX(double alfa)
@@ -181,7 +173,7 @@ void Objeto3D::setRotacaoEmX(double alfa)
                         {0, -sin(alfa), cos(alfa), 0},
                         {0,          0,         0, 1}};
 
-    multMatriz(mRotacao, 4, mat, 4, mRotacao);
+    multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
 
 void Objeto3D::setRotacaoEmZ(double alfa)
@@ -192,7 +184,7 @@ void Objeto3D::setRotacaoEmZ(double alfa)
                         {        0,          0, 1, 0},
                         {        0,          0, 0, 1}};
 
-    multMatriz(mRotacao, 4, mat, 4, mRotacao);
+    multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
 
 void Objeto3D::setTranslacaoEmX(double jump)
