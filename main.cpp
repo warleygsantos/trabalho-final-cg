@@ -114,33 +114,6 @@ void linhaDDA(SDL_Renderer *render,
     }
 }
 
-void mostraNumero(SDL_Renderer *render, SDL_Color cor, string num, Ponto ponto)
-{
-    TTF_Font *fonte = TTF_OpenFont(fonteName, 15);
-    if(!fonte)
-    {
-        printf("Nao foi possivel abrir a fonte: %s\n", fonteName);
-        exit(-1);
-    }
-    cor.r = 150;
-    cor.g = 150;
-    cor.b = 150;
-
-    /* Escreve o nome da projecao em uma surface s.
-     * Cria uma textura apartir da surface s.
-     * Copia a textura para o render no canto superior direito da tela.
-     */
-    SDL_Surface *s = TTF_RenderText_Solid(fonte, num.c_str(), cor);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
-    SDL_Rect rect = {(int) ponto.x, (int) ponto.y, s->w, s->h};
-    SDL_RenderCopy(render, texture, NULL, &rect);
-
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(s);
-    TTF_CloseFont(fonte);
-}
-
-
 double calcula1porM(double P[][2], int L[][2], int indice)
 {
     double deltaX = (double) (P[(L[indice][0])][0] - P[(L[indice][1])][0]);
