@@ -184,6 +184,10 @@ void Objeto3D::setRotacaoEmZ(double alfa)
 {
 
     double v[3];
+    double mat[4][4] = {{1, 0, 0, 0},
+                        {0, cos(alfa), sin(alfa), 0},
+                        {0, -sin(alfa), cos(alfa), 0},
+                        {0, 0, 0, 1}};
 
     for(unsigned int i = 0; i < pontos.size(); ++i)
     {
