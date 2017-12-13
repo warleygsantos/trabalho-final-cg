@@ -126,9 +126,9 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     ponto.y /= ponto.m;
     ponto.z /= ponto.m;
 
-    ponto.x += transladaX;
-    ponto.y += transladaY;
-    ponto.z += transladaZ;
+    ponto.x += Tx;
+    ponto.y += Ty;
+    ponto.z += Tz;
 
     ponto.y = ponto.y;
     projeta(&ponto, vetor[iProjecao]);
@@ -195,17 +195,17 @@ void Objeto3D::setRotacaoEmZ(double alfa)
 
 void Objeto3D::setTranslacaoEmX(double jump)
 {
-    transladaX += jump;
+    Tx += jump;
 }
 
 void Objeto3D::setTranslacaoEmY(double jump)
 {
-    transladaY += jump;
+    Ty += jump;
 }
 
 void Objeto3D::setTranslacaoEmZ(double jump)
 {
-    transladaZ += jump;
+    Tz += jump;
 }
 
 /**

@@ -52,9 +52,9 @@ public:
                            {0, 0, 1, 0},
                            {0, 0, 0, 1}};
 
-    double transladaX = 0;
-    double transladaY = 0;
-    double transladaZ = 0;
+    double Tx = 0;
+    double Ty = 0;
+    double Tz = 0;
 protected:
 
 private:
