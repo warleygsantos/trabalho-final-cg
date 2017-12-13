@@ -29,7 +29,7 @@ OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
 OUT_RELEASE = program
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/ColorSystem.o $(OBJDIR_RELEASE)/src/Draw.o $(OBJDIR_RELEASE)/src/Objeto3D.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/Ajuda.o $(OBJDIR_RELEASE)/src/ColorSystem.o $(OBJDIR_RELEASE)/src/Draw.o $(OBJDIR_RELEASE)/src/Objeto3D.o
 
 all: release
 
@@ -49,6 +49,9 @@ out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 
 $(OBJDIR_RELEASE)/main.o: main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c main.cpp -o $(OBJDIR_RELEASE)/main.o
+
+$(OBJDIR_RELEASE)/src/Ajuda.o: src/Ajuda.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Ajuda.cpp -o $(OBJDIR_RELEASE)/src/Ajuda.o
 
 $(OBJDIR_RELEASE)/src/ColorSystem.o: src/ColorSystem.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/ColorSystem.cpp -o $(OBJDIR_RELEASE)/src/ColorSystem.o

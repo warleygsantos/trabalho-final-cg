@@ -46,13 +46,10 @@
  *  Sx, Sy, Sz: fator de escala do objeto no sistema de referência do universo.
  ******************************************************************************/
 
- #include <array>
-#include <string>
-#include <iostream>
-
-#include <Objeto3D.h>
-#include <ColorSystem.h>
-#include <Draw.h>
+#include "Objeto3D.h"
+#include "ColorSystem.h"
+#include "Draw.h"
+#include "Ajuda.h"
 
 #ifdef _WIN32
 #include <SDL.h>
@@ -69,58 +66,8 @@
 #define JUMP 5    /**< Salto do valor de posicao a cada deslocamento.         */
 
 SDL_DisplayMode DM; /**< Usado para consultar a dimensao da tela.             */
-const char *fonteName = "fonts/verdana.ttf"; /**< Nome/local da fonte TTF.    */
 
 using namespace std;
-
-/**
- * \brief Retorna uma surface com a string.
- * \param fonte Fonte do texto a ser escrito.
- * \param str String a ser escrita.
- * \param cor Cor do texto.
- * \see criAjuda
- * \return SDL_Surface *
- */
-SDL_Surface *imprimeTexto(TTF_Font *fonte, string str, SDL_Color cor)
-{
-    /* Distancia recomendada para escrever as linhas.                         */
-    unsigned int distanciaLinha = TTF_FontLineSkip(fonte);
-
-    /* Quebra a string ao encontrar '\n' e insere cada pedaço em um vetor.    */
-    std::vector<string> vLines;
-    int pos = 0;
-    while(pos != -1)
-    {
-        string strSub;
-        pos = str.find('\n', 0);
-        strSub = str.substr(0, pos);
-        if(pos != -1)
-        {
-            str = str.substr(pos + 1);
-        }
-        vLines.push_back(strSub);
-    }
-
-    /* Surface de saida para o texto.                                          */
-    SDL_Surface *sText = SDL_CreateRGBSurface(0, DM.w, DM.h, 32,
-                         0, 0, 0, 0);
-    SDL_SetSurfaceBlendMode(sText, SDL_BLENDMODE_ADD);
-    /* Surface temporaria.                                                    */
-    SDL_Surface *sTemp = NULL;
-
-    /* Para cada linha:
-     *      Escreve a linha em uma surface temporaria.
-     *      Copia a surface temporaria p/ surface de saida na posicao correta.
-     */
-    for(unsigned int i = 0; i < vLines.size(); i++)
-    {
-        sTemp = TTF_RenderText_Solid(fonte, vLines[i].c_str(), cor);
-        SDL_Rect newSDL_Rect = {0, (signed int) (i * distanciaLinha), 0, 0};
-        SDL_BlitSurface(sTemp, NULL, sText, &newSDL_Rect);
-        SDL_FreeSurface(sTemp);
-    }
-    return sText;
-}
 
 /**
  * \brief Instancia um novo objeto 3D.
@@ -145,40 +92,6 @@ void changeObjeto3D(Objeto3D **obj)
     {
         i = 0;
     }
-}
-
-/**
- * \brief Escreve o nome da projecao utilizada na parte superior direta da tela.
- * \param render Ponteiro para o render usado na tela.
- * \param i Indice da projecao: (0 = Cavaleira, 1 = Cabinet, 2 = Isometrica,
- *                                3 =Fuga em Z, 4 = Fuga em X e Z).
- * \return void
- */
-void SProjecao(SDL_Renderer *render, int i)
-{
-    SDL_Color cor = {0, 255, 255, 0};
-    std::array<string, 5> cProjecao = {"Cavaleira", "Cabinet", "Isometrica",
-                                       "Fuga em Z", "Fuga em X e Z"
-                                      };
-    TTF_Font *fonte = TTF_OpenFont(fonteName, 30);
-    if(!fonte)
-    {
-        printf("Nao foi possivel abrir a fonte: %s\n", fonteName);
-        exit(-1);
-    }
-
-    /* Escreve o nome da projecao em uma surface s.
-     * Cria uma textura apartir da surface s.
-     * Copia a textura para o render no canto superior direito da tela.
-     */
-    SDL_Surface *s = TTF_RenderText_Solid(fonte, cProjecao.at(i).c_str(), cor);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
-    SDL_Rect rect = {DM.w - s->w, 0, s->w, s->h};
-    SDL_RenderCopy(render, texture, NULL, &rect);
-
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(s);
-    TTF_CloseFont(fonte);
 }
 
 /**
@@ -326,13 +239,11 @@ bool handleEventKey(
         else return true; /* Nao atualiza a tela se caiu em uma das condicoes.*/
     }
     else return true; /* Nao atualiza a tela se caiu em uma das condicoes     */
-
     /* Escolhe preto como cor de fundo e limpa a tela.                        */
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);
     /* Desenha o objeto 3D na tela.                                           */
     desenhaPoligono(render, *obj, iProjecao, DM.h);
-
     /* Mostra a ajuda por cima do desenho.                                    */
     if(mostraAjuda)
     {
@@ -340,53 +251,11 @@ bool handleEventKey(
         SDL_RenderCopy(render, texture, NULL, NULL);
         SDL_DestroyTexture(texture);
     }
-
     /* Mostra a projecao utilizada.                                           */
-    SProjecao(render, iProjecao);
-
+    SProjecao(render, iProjecao, DM.w);
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
     return true; // Continua em execucao.
-}
-
-/**
- * \brief Gera surface com as informaçoes de ajuda.
- * \return SDL_Surface* Ponteiro para surface com mapeamento das teclas.
- * \see imprimeTexto
- */
-SDL_Surface *criaAjuda()
-{
-    SDL_Color color = {255, 255, 255, 0}; // Branco.
-
-    /* Abre a o formato da fonte escolhida, e especifica o tamanho.           */
-    TTF_Font *fonte = TTF_OpenFont(fonteName, 25);
-    if(!fonte)
-    {
-        printf("Nao foi possivel abrir a fonte: %s\n", fonteName);
-        exit(-1);
-    }
-
-    SDL_Surface *ajuda = imprimeTexto(fonte,
-                                      " Translacao:\n"
-                                      "     Em torno de X: [A] [D]\n"
-                                      "     Em torno de Y: [W] [S]\n"
-                                      "     Em torno de z: [R] [F]\n"
-                                      "\n Rotacao:\n"
-                                      "     Em torno de X: [J] [L]\n"
-                                      "     Em torno de Y: [I] [K]\n"
-                                      "     Em torno de Z: [U] [H]\n"
-                                      "\n Escala:\n"
-                                      "    Em torno de X: [Ctrl+J] [Ctrl+L]\n"
-                                      "    Em torno de Y: [Ctrl+I] [Ctrl+K]\n"
-                                      "    Em torno de Z: [Ctrl+U] [Ctrl+H]\n"
-                                      "\n Novo objeto:\n"
-                                      "    [ENTER]\n"
-                                      "\n Troca de projecao:\n"
-                                      "    [P]\n"
-                                      "\n Sair:\n"
-                                      "    [ESC]", color);
-    TTF_CloseFont(fonte);
-    return ajuda;
 }
 
 int main(int argc, char *argv[])
@@ -415,13 +284,13 @@ int main(int argc, char *argv[])
     /* Desenha o poligno e renderiza.                                         */
     desenhaPoligono(render, obj, 0, DM.h);
     /* Escreve qual projecao esta sendo usada. Defaul: Cavaleira.             */
-    SProjecao(render, 0);
+    SProjecao(render, 0, DM.w);
 
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
 
     /* Cria a mensagem de ajuda.                                              */
-    SDL_Surface *ajuda = criaAjuda();
+    SDL_Surface *ajuda = criaAjuda(DM.w, DM.h);
 
     bool running = true; // Controle para continuar executando.
     SDL_Event event;
