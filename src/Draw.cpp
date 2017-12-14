@@ -86,22 +86,39 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
             if ((d1.x * d2.y) - (d1.y * d2.x) < (double) 0)
                 continue;
 
+            /*-----------------Le a cor da face E trata luz-------------------*/
+
+            Ponto pn;
+
+            pn.x = (P3.y - P2.y) * (P1.z - P2.z) - (P1.y - P2.y) * (P3.z - P2.z);
+            pn.y = (P3.z - P2.z) * (P1.x - P2.x) - (P1.z - P2.z) * (P3.x - P2.x);
+            pn.z = (P3.x - P2.x) * (P1.y - P2.y) - (P1.x - P2.x) * (P3.y - P2.y);
+
+            Ponto pLuz;
+            pLuz.x = 0;
+            pLuz.y = 0;
+            pLuz.z = 0;
+            SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+            SDL_RenderDrawPoint(render, pLuz.x, pLuz.y);
+            double normal = pn.x * (pLuz.x - P2.x) + pn.y * (pLuz.y - P2.y) + pn.z * (pLuz.z - P2.z);
             /*-----------------------Le a cor da face-------------------------*/
-            Cor cor= obj->cores[c];
+            Cor cor = obj->cores[c];
 
-            RGB nrgb;
-            nrgb.r = cor.r;
-            nrgb.b = cor.b;
-            nrgb.g = cor.g;
+            RGB rgb;
+            rgb.r = cor.r;
+            rgb.b = cor.b;
+            rgb.g = cor.g;
 
-            HSV nhsv = rgb2hsv(nrgb);
+            HSV hsv = rgb2hsv(rgb);
 
-            //nhsv.v  = 255;
+            hsv.v  = 255;
+            if(normal < 0)
+                hsv.v = 5;
 
-            nrgb = hsv2rgb(nhsv);
-            cor.r = nrgb.r;
-            cor.g = nrgb.g;
-            cor.b = nrgb.b;
+            rgb = hsv2rgb(hsv);
+            cor.r = rgb.r;
+            cor.g = rgb.g;
+            cor.b = rgb.b;
 
             /* Configura a cor do poligno.                                    */
             SDL_SetRenderDrawColor(render, cor.r, cor.g, cor.b, 0);
