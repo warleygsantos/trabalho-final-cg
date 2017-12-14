@@ -37,8 +37,8 @@ void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
  */
 void cavaleira(Ponto *ponto)
 {
-    double x = cos((45 * M_PI / 180.0));
-    double y = sin((45 * M_PI / 180.0));
+    const double x = cos((45 * M_PI / 180.0));
+    const double y = sin((45 * M_PI / 180.0));
 
     double cav[4][4] =
     {
@@ -68,8 +68,8 @@ void cavaleira(Ponto *ponto)
  */
 void cabinet(Ponto *ponto)
 {
-    double x = cos((30 * M_PI / 180.0));
-    double y = sin((30 * M_PI / 180.0));
+    const double x = cos((30 * M_PI / 180.0));
+    const double y = sin((30 * M_PI / 180.0));
 
     double cab[4][4] =
     {
