@@ -24,7 +24,8 @@ void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
     }
     for(i = 0; i < ma; ++i)
     {
-        for(j = 0; j < 4; ++j){
+        for(j = 0; j < 4; ++j)
+        {
             C[i][j] = tmp[i][j];
         }
     }
@@ -36,10 +37,29 @@ void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
  */
 void cavaleira(Ponto *ponto)
 {
-    double cav = 0.707106781 * ponto->z;
+    double x = cos((45 * M_PI / 180.0));
+    double y = sin((45 * M_PI / 180.0));
 
-    ponto->x += cav;
-    ponto->y += cav;
+    double cav[4][4] =
+    {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {x, y, 0, 0},
+        {0, 0, 0, 1}
+    };
+
+    double v[1][4];
+    v[0][0] = ponto->x;
+    v[0][1] = ponto->y;
+    v[0][2] = ponto->z;
+    v[0][3] = ponto->m;
+
+    multMatriz(v, 1, cav, 4, v);
+
+    ponto->x = v[0][0];
+    ponto->y = v[0][1];
+    ponto->z = v[0][2];
+    ponto->m = v[0][3];
 }
 
 /**
@@ -48,10 +68,29 @@ void cavaleira(Ponto *ponto)
  */
 void cabinet(Ponto *ponto)
 {
-    double cab = 0.353553391 * ponto->z;
+    double x = cos((30 * M_PI / 180.0));
+    double y = sin((30 * M_PI / 180.0));
 
-    ponto->x += cab;
-    ponto->y += cab;
+    double cab[4][4] =
+    {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {x, y, 0, 0},
+        {0, 0, 0, 1}
+    };
+
+    double v[1][4];
+    v[0][0] = ponto->x;
+    v[0][1] = ponto->y;
+    v[0][2] = ponto->z;
+    v[0][3] = ponto->m;
+
+    multMatriz(v, 1, cab, 4, v);
+
+    ponto->x = v[0][0];
+    ponto->y = v[0][1];
+    ponto->z = v[0][2];
+    ponto->m = v[0][3];
 }
 
 /**
@@ -61,10 +100,13 @@ void cabinet(Ponto *ponto)
 void isometrica(Ponto *ponto)
 {
     double v[1][4];
-    double matriz[4][4] = {{0.707,  0.408, 0.000, 0.000},
-                           {0.000,  0.816, 0.000, 0.000},
-                           {0.707, -0.408, 0.000, 0.000},
-                           {0.000,  0.000, 0.000, 1.000}};
+    double matriz[4][4] =
+    {
+        {0.707,  0.408, 0.000, 0.000},
+        {0.000,  0.816, 0.000, 0.000},
+        {0.707, -0.408, 0.000, 0.000},
+        {0.000,  0.000, 0.000, 1.000}
+    };
     v[0][0] = ponto->x;
     v[0][1] = ponto->y;
     v[0][2] = ponto->z;
@@ -84,8 +126,7 @@ void isometrica(Ponto *ponto)
  */
 void fugaZ(Ponto *ponto)
 {
-    ponto->x = (20 / ponto->z) * ponto->x;
-    ponto->y = (20 / ponto->z) * ponto->y;
+
 }
 
 /**
@@ -163,20 +204,26 @@ void Objeto3D::setEscalaEmZ(double fator)
 void Objeto3D::setRotacaoEmY(double alfa)
 {
 
-    double mat[4][4] = {{cos(alfa), 0, -sin(alfa), 0},
-                        {        0, 1,          0, 0},
-                        {sin(alfa), 0,  cos(alfa), 0},
-                        {        0, 0,          0, 1}};
+    double mat[4][4] =
+    {
+        {cos(alfa), 0, -sin(alfa), 0},
+        {        0, 1,          0, 0},
+        {sin(alfa), 0,  cos(alfa), 0},
+        {        0, 0,          0, 1}
+    };
 
     multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
 
 void Objeto3D::setRotacaoEmX(double alfa)
 {
-    double mat[4][4] = {{1,          0,         0, 0},
-                        {0,  cos(alfa), sin(alfa), 0},
-                        {0, -sin(alfa), cos(alfa), 0},
-                        {0,          0,         0, 1}};
+    double mat[4][4] =
+    {
+        {1,          0,         0, 0},
+        {0,  cos(alfa), sin(alfa), 0},
+        {0, -sin(alfa), cos(alfa), 0},
+        {0,          0,         0, 1}
+    };
 
     multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
@@ -184,10 +231,13 @@ void Objeto3D::setRotacaoEmX(double alfa)
 void Objeto3D::setRotacaoEmZ(double alfa)
 {
 
-    double mat[4][4] = {{cos(alfa), -sin(alfa), 0, 0},
-                        {sin(alfa),  cos(alfa), 0, 0},
-                        {        0,          0, 1, 0},
-                        {        0,          0, 0, 1}};
+    double mat[4][4] =
+    {
+        {cos(alfa), -sin(alfa), 0, 0},
+        {sin(alfa),  cos(alfa), 0, 0},
+        {        0,          0, 1, 0},
+        {        0,          0, 0, 1}
+    };
 
     multMatriz(mTransformacoes, 4, mat, 4, mTransformacoes);
 }
