@@ -12,7 +12,7 @@ SDL_Surface *criaAjuda(int w, int h)
     SDL_Color color = {255, 255, 255, 0}; // Branco.
 
     /* Abre a o formato da fonte escolhida, e especifica o tamanho.           */
-    TTF_Font *fonte = TTF_OpenFont(fonteTTF, 25);
+    TTF_Font *fonte = TTF_OpenFont(fonteTTF, 30);
     if(!fonte)
     {
         printf("Nao foi possivel abrir a fonte: %s\n", fonteTTF);
@@ -34,8 +34,6 @@ SDL_Surface *criaAjuda(int w, int h)
                                       "    Em torno de Z: [Ctrl+U] [Ctrl+H]\n"
                                       "\n Novo objeto:\n"
                                       "    [ENTER]\n"
-                                      "\n Troca de projecao:\n"
-                                      "    [P]\n"
                                       "\n Sair:\n"
                                       "    [ESC]", color, w, h);
     TTF_CloseFont(fonte);
@@ -49,12 +47,10 @@ SDL_Surface *criaAjuda(int w, int h)
  *                                3 =Fuga em Z, 4 = Fuga em X e Z).
  * \return void
  */
-void SProjecao(SDL_Renderer *render, int i, int w)
+void SProjecao(SDL_Renderer *render, int w)
 {
     SDL_Color cor = {0, 255, 255, 0};
-    std::array<std::string, 5> cProjecao = {"Cavaleira", "Cabinet", "Isometrica",
-                                       "Fuga em Z", "Fuga em X e Z"
-                                      };
+
     TTF_Font *fonte = TTF_OpenFont(fonteTTF, 30);
     if(!fonte)
     {
@@ -66,7 +62,7 @@ void SProjecao(SDL_Renderer *render, int i, int w)
      * Cria uma textura apartir da surface s.
      * Copia a textura para o render no canto superior direito da tela.
      */
-    SDL_Surface *s = TTF_RenderText_Solid(fonte, cProjecao.at(i).c_str(), cor);
+    SDL_Surface *s = TTF_RenderText_Solid(fonte, "Projecao em Y", cor);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
     SDL_Rect rect = {w - s->w, 0, s->w, s->h};
     SDL_RenderCopy(render, texture, NULL, &rect);

@@ -21,6 +21,6 @@ typedef struct No
     int y;
 } No;
 
-void desenhaPoligono(SDL_Renderer *, Objeto3D*, int, int);
+void desenhaPoligono(SDL_Renderer *, Objeto3D*, int);
 
 #endif // DRAW_H_INCLUDED

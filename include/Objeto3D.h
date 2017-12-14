@@ -46,7 +46,7 @@ public:
     void setEscalaEmX(double);
     void setEscalaEmY(double);
     void setEscalaEmZ(double);
-    Ponto getPonto(int, int);
+    Ponto getPonto(int);
     virtual ~Objeto3D();
     double mTransformacoes[4][4] = {{1, 0, 0, 0},
                                     {0, 1, 0, 0},

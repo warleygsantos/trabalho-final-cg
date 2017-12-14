@@ -15,7 +15,7 @@
 #include <array>
 #include <vector>
 
-void SProjecao(SDL_Renderer *, int, int);
+void SProjecao(SDL_Renderer *, int);
 SDL_Surface *criaAjuda(int, int);
 
 SDL_Surface *imprimeTexto(TTF_Font *, std::string, SDL_Color, int, int);

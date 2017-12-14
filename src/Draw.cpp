@@ -59,7 +59,7 @@ double calcula1porM(double P[][2], int L[][2], int indice)
  * \see linhaDDA
  * \return void
  */
-void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
+void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int h)
 {
     bool preenche = true;
     vector<No> nodes;
@@ -72,9 +72,9 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
         {
 
             /*-----------------------Esconde face-----------------------------*/
-            Ponto P1 = obj->getPonto((*it).at(0), projecao);
-            Ponto P2 = obj->getPonto((*it).at(1), projecao);
-            Ponto P3 = obj->getPonto((*it).at(2), projecao);
+            Ponto P1 = obj->getPonto((*it).at(0));
+            Ponto P2 = obj->getPonto((*it).at(1));
+            Ponto P3 = obj->getPonto((*it).at(2));
 
             Ponto d1, d2;
 
@@ -97,9 +97,9 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
             Ponto pLuz;
             pLuz.x = 0;
             pLuz.y = 0;
-            pLuz.z = 0;
-            SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-            SDL_RenderDrawPoint(render, pLuz.x, pLuz.y);
+            pLuz.z = 100;
+          //  SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+         //   SDL_RenderDrawPoint(render, pLuz.x, pLuz.y);
             double normal = pn.x * (pLuz.x - P2.x) + pn.y * (pLuz.y - P2.y) + pn.z * (pLuz.z - P2.z);
             /*-----------------------Le a cor da face-------------------------*/
             Cor cor = obj->cores[c];
@@ -113,7 +113,7 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
 
             hsv.v  = 255;
             if(normal < 0)
-                hsv.v = 5;
+                hsv.v = 25;
 
             rgb = hsv2rgb(hsv);
             cor.r = rgb.r;
@@ -129,8 +129,8 @@ void desenhaPoligono(SDL_Renderer *render, Objeto3D* obj, int projecao, int h)
 
             for(unsigned int i = 0; i < obj->pontos.size(); ++i)
             {
-                P[i][0] = obj->getPonto(i, projecao).x;
-                P[i][1] = obj->getPonto(i, projecao).y;
+                P[i][0] = obj->getPonto(i).x;
+                P[i][1] = obj->getPonto(i).y;
             }
             unsigned int i;
             for(i = 0; i <  (*it).size() -1; ++i)

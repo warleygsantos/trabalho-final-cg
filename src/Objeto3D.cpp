@@ -31,94 +31,6 @@ void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
     }
 }
 
-/**
- * \brief Realiza a projecao Cavaleira.
- * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
- */
-void cavaleira(Ponto *ponto)
-{
-    const double x = cos((45 * M_PI / 180.0));
-    const double y = sin((45 * M_PI / 180.0));
-
-    double cav[4][4] =
-    {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {x, y, 0, 0},
-        {0, 0, 0, 1}
-    };
-
-    double v[1][4];
-    v[0][0] = ponto->x;
-    v[0][1] = ponto->y;
-    v[0][2] = ponto->z;
-    v[0][3] = ponto->m;
-
-    multMatriz(v, 1, cav, 4, v);
-
-    ponto->x = v[0][0];
-    ponto->y = v[0][1];
-    ponto->z = v[0][2];
-    ponto->m = v[0][3];
-}
-
-/**
- * \brief Realiza a projecao Cabinet.
- * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
- */
-void cabinet(Ponto *ponto)
-{
-    const double x = cos((30 * M_PI / 180.0));
-    const double y = sin((30 * M_PI / 180.0));
-
-    double cab[4][4] =
-    {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {x, y, 0, 0},
-        {0, 0, 0, 1}
-    };
-
-    double v[1][4];
-    v[0][0] = ponto->x;
-    v[0][1] = ponto->y;
-    v[0][2] = ponto->z;
-    v[0][3] = ponto->m;
-
-    multMatriz(v, 1, cab, 4, v);
-
-    ponto->x = v[0][0];
-    ponto->y = v[0][1];
-    ponto->z = v[0][2];
-    ponto->m = v[0][3];
-}
-
-/**
- * \brief Realiza a projecao Isometrica.
- * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
- */
-void isometrica(Ponto *ponto)
-{
-    double v[1][4];
-    double matriz[4][4] =
-    {
-        {0.707,  0.408, 0.000, 0.000},
-        {0.000,  0.816, 0.000, 0.000},
-        {0.707, -0.408, 0.000, 0.000},
-        {0.000,  0.000, 0.000, 1.000}
-    };
-    v[0][0] = ponto->x;
-    v[0][1] = ponto->y;
-    v[0][2] = ponto->z;
-    v[0][3] = ponto->m;
-
-    multMatriz(v, 1, matriz, 4, v);
-
-    ponto->x = v[0][0];
-    ponto->y = v[0][1];
-    ponto->z = v[0][2];
-    ponto->m = v[0][3];
-}
 
 /**
  * \brief Realiza a projecao em Fuga em Z.
@@ -126,20 +38,48 @@ void isometrica(Ponto *ponto)
  */
 void fugaZ(Ponto *ponto)
 {
+    double v[1][4];
+    v[0][0] = ponto->x;
+    v[0][1] = ponto->y;
+    v[0][2] = ponto->z;
+    v[0][3] = ponto->m;
 
+    double fx = 1366 / 2, fy = 768 / 2;
+    double fz = 1800.0;
+    double projMat[4][4] =
+    {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, -1.0/fz},
+        {0, 0, 0, 1}
+    };
+
+    double mat[4][4] =
+    {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {-fx, -fy, 0, 1},
+    };
+
+    multMatriz(mat, 4,projMat, 4,projMat);
+
+    double mat2[4][4] =
+    {
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {fx, fy, 0, 1},
+    };
+
+    multMatriz(projMat, 4,mat2, 4, projMat);
+    multMatriz(v, 1, projMat, 4, v);
+
+    ponto->x = v[0][0];
+    ponto->y = v[0][1];
+    ponto->z = v[0][2];
+    ponto->m = v[0][3];
 }
-
-/**
- * \brief Realiza a projecao Fuga em X e Z.
- * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
- */
-void fugaXZ(Ponto *ponto)
-{
-
-}
-
-/* Vetor de ponteira para as funcoes de projecaol.                            */
-Projecao (*vetor[5]) = {cavaleira, cabinet, isometrica, fugaZ, fugaXZ};
 
 /**
  * \brief Responsavel por chamar a projecao de forma generica.
@@ -157,7 +97,7 @@ void projeta(Ponto *ponto, Projecao projecao)
  * \param projecao Indice correspondente a projecao que deve ser usada.
  * \return Ponto com operacoes de translacao, escala, rotacao e projecao.
  */
-Ponto Objeto3D::getPonto(int indice, int iProjecao)
+Ponto Objeto3D::getPonto(int indice)
 {
     Ponto ponto;
     double v[1][4];
@@ -174,15 +114,15 @@ Ponto Objeto3D::getPonto(int indice, int iProjecao)
     ponto.z = v[0][2];
     ponto.m = v[0][3];
 
-    ponto.x /= ponto.m;
-    ponto.y /= ponto.m;
-    ponto.z /= ponto.m;
-
     ponto.x += Tx;
     ponto.y += Ty;
     ponto.z += Tz;
 
-    projeta(&ponto, vetor[iProjecao]);
+    fugaZ(&ponto);
+
+    ponto.x /= ponto.m;
+    ponto.y /= ponto.m;
+    ponto.z /= ponto.m;
     return ponto;
 }
 

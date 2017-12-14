@@ -112,12 +112,6 @@ bool handleEventKey(
     /* True para tecla de ajuda precionada.                                   */
     static bool mostraAjuda = false;
 
-    /* Indeice da projeçao escolhida. Default: Cavaleira.
-     *   0 = Cavaleira, 1 = Cabinet, 2 = Isometrica, 3 = Fuga em Z
-     *   4 = Fuga em X e Z).
-     */
-    static int iProjecao = 0;
-
     /* Eventos ao precionar tecla.                                            */
     if(event->type == SDL_KEYDOWN)
     {
@@ -221,15 +215,6 @@ bool handleEventKey(
                 mostraAjuda = true; // Mostra ajuda na tela.
             }
         }
-        /* Percorre pelas projecoes de forma circurlar.                       */
-        else if(event->key.keysym.sym == SDLK_p)
-        {
-            ++iProjecao;
-            if(iProjecao >= 5)
-            {
-                iProjecao = 0;
-            }
-        }
     }
     /* Eventos ao soltar tecla.                                               */
     else if(event->type == SDL_KEYUP)
@@ -243,7 +228,7 @@ bool handleEventKey(
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);
     /* Desenha o objeto 3D na tela.                                           */
-    desenhaPoligono(render, *obj, iProjecao, DM.h);
+    desenhaPoligono(render, *obj, DM.h);
     /* Mostra a ajuda por cima do desenho.                                    */
     if(mostraAjuda)
     {
@@ -252,7 +237,7 @@ bool handleEventKey(
         SDL_DestroyTexture(texture);
     }
     /* Mostra a projecao utilizada.                                           */
-    SProjecao(render, iProjecao, DM.w);
+    SProjecao(render, DM.w);
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
     return true; // Continua em execucao.
@@ -282,9 +267,9 @@ int main(int argc, char *argv[])
                            SDL_RENDERER_ACCELERATED);
 
     /* Desenha o poligno e renderiza.                                         */
-    desenhaPoligono(render, obj, 0, DM.h);
+    desenhaPoligono(render, obj, DM.h);
     /* Escreve qual projecao esta sendo usada. Defaul: Cavaleira.             */
-    SProjecao(render, 0, DM.w);
+    SProjecao(render, DM.w);
 
     /* Renderiza.                                                             */
     SDL_RenderPresent(render);
