@@ -73,25 +73,18 @@ using namespace std;
  * \brief Instancia um novo objeto 3D.
  *  APENAS O QUADRADO ABILITADO ATE MODIFICAR O FORMATO DOS OUTROS ARQUIBOS.
  */
-void changeObjeto3D(Objeto3D **obj)
+void changeObjeto3D(std::vector<Objeto3D *> *obj, int iObjeto)
 {
-    static int i = 0;
-    const char *escolha[] = { "objetos3D/quadrado.war"
-                              //       "objetos3D/coracao.war",
-                              //     "objetos3D/letraA.war"
-                            };
-    delete *obj;
-    *obj = new Objeto3D(escolha[i]);
+    const char *escolha[1] = { "objetos3D/quadrado.war"
+                               //       "objetos3D/coracao.war",
+                               //     "objetos3D/letraA.war"
+                             };
 
+    // obj->erase(obj->begin() + iObjeto);
+    (*obj).at(iObjeto) = new Objeto3D(escolha[0]);
     /* Posiciona o novo objeto perto do centro da tela.                       */
-    (*obj)->setTranslacaoEmX(DM.w/2);
-    (*obj)->setTranslacaoEmY(DM.h/2);
-
-    ++i;
-    if(i >= 1)
-    {
-        i = 0;
-    }
+    obj->at(iObjeto)->setTranslacaoEmX(DM.w/2);
+    obj->at(iObjeto)->setTranslacaoEmY(DM.h/2);
 }
 
 /**
@@ -104,8 +97,9 @@ void changeObjeto3D(Objeto3D **obj)
  * \return False caso o usuario deseja fechar o programa. True continua.
  */
 bool handleEventKey(
-    SDL_Event *event, Objeto3D **obj, SDL_Renderer *render, SDL_Surface *ajuda)
+    SDL_Event *event, std::vector<Objeto3D *> *obj, SDL_Renderer *render, SDL_Surface *ajuda)
 {
+    static unsigned int iObjeto = 0;
     /* Permite combinaçao de teclas. True: SPACE precionado.                  */
     static bool spaceIsDown = false;
 
@@ -117,75 +111,75 @@ bool handleEventKey(
     {
         if(event->key.keysym.sym == SDLK_a)
         {
-            (*obj)->setTranslacaoEmX(-JUMP); // Vai para esquerda.
+            (*obj)[iObjeto]->setTranslacaoEmX(-JUMP); // Vai para esquerda.
         }
         else if(event->key.keysym.sym == SDLK_d)
         {
-            (*obj)->setTranslacaoEmX(JUMP); // Vai para a diretira.
+            (*obj)[iObjeto]->setTranslacaoEmX(JUMP); // Vai para a diretira.
         }
         else if(event->key.keysym.sym == SDLK_w)
         {
-            (*obj)->setTranslacaoEmY(-JUMP); // Vai para cima.
+            (*obj)[iObjeto]->setTranslacaoEmY(-JUMP); // Vai para cima.
         }
         else if(event->key.keysym.sym == SDLK_s)
         {
-            (*obj)->setTranslacaoEmY(JUMP); // Vai para baixo.
+            (*obj)[iObjeto]->setTranslacaoEmY(JUMP); // Vai para baixo.
         }
         else if(event->key.keysym.sym == SDLK_r)
         {
-            (*obj)->setTranslacaoEmZ(-JUMP); // Vai para frente.
+            (*obj)[iObjeto]->setTranslacaoEmZ(-JUMP); // Vai para frente.
         }
         else if(event->key.keysym.sym == SDLK_f)
         {
-            (*obj)->setTranslacaoEmZ(JUMP); // Vai para tras.
+            (*obj)[iObjeto]->setTranslacaoEmZ(JUMP); // Vai para tras.
         }
         else if(event->key.keysym.sym == SDLK_j && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmY(-ALFA); // Roda eixo y sentido horario.
+            (*obj)[iObjeto]->setRotacaoEmY(-ALFA); // Roda eixo y sentido horario.
         }
         else if(event->key.keysym.sym == SDLK_l && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmY(ALFA); // Roda eixo y sentido anti horario.
+            (*obj)[iObjeto]->setRotacaoEmY(ALFA); // Roda eixo y sentido anti horario.
         }
         else if(event->key.keysym.sym == SDLK_k && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmX(-ALFA); // Roda entorno eixo x.
+            (*obj)[iObjeto]->setRotacaoEmX(-ALFA); // Roda entorno eixo x.
         }
         else if(event->key.keysym.sym == SDLK_i && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmX(ALFA); // Roda entorno eixo x.
+            (*obj)[iObjeto]->setRotacaoEmX(ALFA); // Roda entorno eixo x.
         }
         else if(event->key.keysym.sym == SDLK_u && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmZ(-ALFA); // Roda entorno eixo Z.
+            (*obj)[iObjeto]->setRotacaoEmZ(-ALFA); // Roda entorno eixo Z.
         }
         else if(event->key.keysym.sym == SDLK_h && !spaceIsDown)
         {
-            (*obj)->setRotacaoEmZ(ALFA); // Roda entorno eixo Z.
+            (*obj)[iObjeto]->setRotacaoEmZ(ALFA); // Roda entorno eixo Z.
         }
         else if(event->key.keysym.sym == SDLK_j && spaceIsDown)
         {
-            (*obj)->setEscalaEmX(-FATOR); // Achata no eixo X.
+            (*obj)[iObjeto]->setEscalaEmX(-FATOR); // Achata no eixo X.
         }
         else if(event->key.keysym.sym == SDLK_l && spaceIsDown)
         {
-            (*obj)->setEscalaEmX(FATOR); // Estica pelo eixo X.
+            (*obj)[iObjeto]->setEscalaEmX(FATOR); // Estica pelo eixo X.
         }
         else if(event->key.keysym.sym == SDLK_k && spaceIsDown)
         {
-            (*obj)->setEscalaEmY(-FATOR); // Achata no eixo Y.
+            (*obj)[iObjeto]->setEscalaEmY(-FATOR); // Achata no eixo Y.
         }
         else if(event->key.keysym.sym == SDLK_i && spaceIsDown)
         {
-            (*obj)->setEscalaEmY(FATOR); // Estica pelo eixo Y.
+            (*obj)[iObjeto]->setEscalaEmY(FATOR); // Estica pelo eixo Y.
         }
         else if(event->key.keysym.sym == SDLK_u && spaceIsDown)
         {
-            (*obj)->setEscalaEmZ(-FATOR); // Achata pelo eixo X.
+            (*obj)[iObjeto]->setEscalaEmZ(-FATOR); // Achata pelo eixo X.
         }
         else if(event->key.keysym.sym == SDLK_h && spaceIsDown)
         {
-            (*obj)->setEscalaEmZ(FATOR); // Estica pelo eixo Z.
+            (*obj)[iObjeto]->setEscalaEmZ(FATOR); // Estica pelo eixo Z.
         }
         else if(event->key.keysym.sym == SDLK_SPACE)
         {
@@ -195,9 +189,15 @@ bool handleEventKey(
         {
             return false; // Usuario clicou em ESC. Programa termina.
         }
+        else if(event->key.keysym.sym == SDLK_TAB)
+        {
+            ++iObjeto;
+            if(iObjeto >= obj->size())
+                iObjeto = 0;
+        }
         else if(event->key.keysym.sym == SDLK_RETURN)
         {
-            changeObjeto3D(obj); // Muda de objeto 3D.
+            changeObjeto3D(obj, iObjeto); // Muda de objeto 3D.
         }
         /* Quando o evento for causado por precionar F1:
          * (Apenas manipula a variaval de controle)
@@ -228,7 +228,12 @@ bool handleEventKey(
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);
     /* Desenha o objeto 3D na tela.                                           */
-    desenhaPoligono(render, *obj, DM.h);
+    /* Desenha o objeto 3D na tela.                                            */
+    std::vector<Objeto3D *>::iterator it;
+    for (it = obj->begin(); it != obj->end(); ++it)
+    {
+        desenhaPoligono(render, *it, DM.h);
+    }
     /* Mostra a ajuda por cima do desenho.                                    */
     if(mostraAjuda)
     {
@@ -253,10 +258,17 @@ int main(int argc, char *argv[])
     /* Obtem as medidas de tamanho da tela.                                   */
     SDL_GetCurrentDisplayMode(0, &DM);
 
+    std::vector<Objeto3D *> obj;
+
+    obj.push_back(new Objeto3D("objetos3D/quadrado.war"));
     /* Instancia um objeto 3D e o posiciona perto do centro da tela.          */
-    Objeto3D *obj = new Objeto3D("objetos3D/quadrado.war");
-    obj->setTranslacaoEmX(DM.w/2);
-    obj->setTranslacaoEmY(DM.h/2);
+    obj.push_back(new Objeto3D("objetos3D/max.dat"));
+
+    obj.at(0)->setTranslacaoEmX(DM.w/2 + 50);
+    obj.at(0)->setTranslacaoEmY(DM.h/2 + 50);
+
+    obj.at(1)->setTranslacaoEmX(DM.w/2 - 50);
+    obj.at(1)->setTranslacaoEmY(DM.h/2 - 50);
 
     /* Cria uma janela e associa um render a ela.                             */
     SDL_Window *window = SDL_CreateWindow("Trabalho Pratico 5",
@@ -267,7 +279,8 @@ int main(int argc, char *argv[])
                            SDL_RENDERER_ACCELERATED);
 
     /* Desenha o poligno e renderiza.                                         */
-    desenhaPoligono(render, obj, DM.h);
+    desenhaPoligono(render, obj.at(0), DM.h);
+    desenhaPoligono(render, obj.at(1), DM.h);
     /* Escreve qual projecao esta sendo usada. Defaul: Cavaleira.             */
     SProjecao(render, DM.w);
 
@@ -300,7 +313,7 @@ int main(int argc, char *argv[])
         }
         SDL_Delay(35); // Delay para popular processamento.
     }
-    delete obj;
+    // delete obj;
     SDL_FreeSurface(ajuda);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
