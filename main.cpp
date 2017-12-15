@@ -199,8 +199,11 @@ bool handleEventKey(
         }
         else if(event->key.keysym.sym == SDLK_DELETE)
         {
-            obj->erase(obj->begin() + iObjeto);
-            --iObjeto;
+            if(obj->size() > 1)
+            {
+                obj->erase(obj->begin() + iObjeto);
+                --iObjeto;
+            }
         }
         else if(event->key.keysym.sym == SDLK_TAB)
         {
