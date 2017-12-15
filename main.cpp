@@ -202,7 +202,7 @@ bool handleEventKey(
             if(obj->size() > 1)
             {
                 obj->erase(obj->begin() + iObjeto);
-                --iObjeto;
+                iObjeto = 0;
             }
         }
         else if(event->key.keysym.sym == SDLK_TAB)
@@ -241,6 +241,7 @@ bool handleEventKey(
     }
     else return true; /* Nao atualiza a tela se caiu em uma das condicoes     */
     /* Escolhe preto como cor de fundo e limpa a tela.                        */
+
     SDL_SetRenderDrawColor(render, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(render);
     /* Desenha o objeto 3D na tela.                                           */
