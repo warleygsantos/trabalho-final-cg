@@ -68,17 +68,17 @@
 SDL_DisplayMode DM; /**< Usado para consultar a dimensao da tela.             */
 
 using namespace std;
-
+const char *escolha[1] = { "objetos3D/quadrado.war"
+                               //       "objetos3D/coracao.war",
+                               //     "objetos3D/letraA.war"
+                             };
 /**
  * \brief Instancia um novo objeto 3D.
  *  APENAS O QUADRADO ABILITADO ATE MODIFICAR O FORMATO DOS OUTROS ARQUIBOS.
  */
 void changeObjeto3D(std::vector<Objeto3D *> *obj, int iObjeto)
 {
-    const char *escolha[1] = { "objetos3D/quadrado.war"
-                               //       "objetos3D/coracao.war",
-                               //     "objetos3D/letraA.war"
-                             };
+
 
     // obj->erase(obj->begin() + iObjeto);
     (*obj).at(iObjeto) = new Objeto3D(escolha[0]);
@@ -188,6 +188,19 @@ bool handleEventKey(
         else if(event->key.keysym.sym == SDLK_ESCAPE)
         {
             return false; // Usuario clicou em ESC. Programa termina.
+        }
+        else if(event->key.keysym.sym == SDLK_INSERT)
+        {
+            (*obj).push_back(new Objeto3D(escolha[0]));
+            /* Posiciona o novo objeto perto do centro da tela.                */
+            obj->at(obj->size() -1)->setTranslacaoEmX(DM.w/2);
+            obj->at(obj->size() -1)->setTranslacaoEmY(DM.h/2);
+            iObjeto = obj->size() - 1;
+        }
+        else if(event->key.keysym.sym == SDLK_DELETE)
+        {
+            obj->erase(obj->begin() + iObjeto);
+            --iObjeto;
         }
         else if(event->key.keysym.sym == SDLK_TAB)
         {
