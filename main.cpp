@@ -279,13 +279,10 @@ int main(int argc, char *argv[])
 
     obj.push_back(new Objeto3D("objetos3D/quadrado.war", DM.w, DM.h));
     /* Instancia um objeto 3D e o posiciona perto do centro da tela.          */
-    obj.push_back(new Objeto3D("objetos3D/max.dat", DM.w, DM.h));
 
-    obj.at(0)->setTranslacaoEmX(DM.w/2 + 50);
-    obj.at(0)->setTranslacaoEmY(DM.h/2 + 50);
+    obj.at(0)->setTranslacaoEmX(DM.w/2);
+    obj.at(0)->setTranslacaoEmY(DM.h/2);
 
-    obj.at(1)->setTranslacaoEmX(DM.w/2 - 50);
-    obj.at(1)->setTranslacaoEmY(DM.h/2 - 50);
 
     /* Cria uma janela e associa um render a ela.                             */
     SDL_Window *window = SDL_CreateWindow("Trabalho Pratico 5",
@@ -297,7 +294,6 @@ int main(int argc, char *argv[])
 
     /* Desenha o poligno e renderiza.                                         */
     desenhaPoligono(render, obj.at(0), DM.h);
-    desenhaPoligono(render, obj.at(1), DM.h);
     /* Escreve qual projecao esta sendo usada. Defaul: Cavaleira.             */
     SProjecao(render, DM.w);
 
