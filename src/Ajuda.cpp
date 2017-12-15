@@ -12,7 +12,7 @@ SDL_Surface *criaAjuda(int w, int h)
     SDL_Color color = {255, 255, 255, 0}; // Branco.
 
     /* Abre a o formato da fonte escolhida, e especifica o tamanho.           */
-    TTF_Font *fonte = TTF_OpenFont(fonteTTF, 30);
+    TTF_Font *fonte = TTF_OpenFont(fonteTTF, 25);
     if(!fonte)
     {
         printf("Nao foi possivel abrir a fonte: %s\n", fonteTTF);
@@ -21,21 +21,22 @@ SDL_Surface *criaAjuda(int w, int h)
 
     SDL_Surface *ajuda = imprimeTexto(fonte,
                                       " Translacao:\n"
-                                      "     Em torno de X: [A] [D]\n"
-                                      "     Em torno de Y: [W] [S]\n"
-                                      "     Em torno de z: [R] [F]\n"
+                                      "     Em X: [A] [D]\n"
+                                      "     Em Y: [W] [S]\n"
+                                      "     Em Z: [R] [F]\n"
                                       "\n Rotacao:\n"
-                                      "     Em torno de X: [J] [L]\n"
-                                      "     Em torno de Y: [I] [K]\n"
+                                      "     Em torno de X: [K] [I]\n"
+                                      "     Em torno de Y: [J] [L]\n"
                                       "     Em torno de Z: [U] [H]\n"
                                       "\n Escala:\n"
-                                      "    Em torno de X: [Ctrl+J] [Ctrl+L]\n"
-                                      "    Em torno de Y: [Ctrl+I] [Ctrl+K]\n"
-                                      "    Em torno de Z: [Ctrl+U] [Ctrl+H]\n"
-                                      "\n Novo objeto:\n"
-                                      "    [ENTER]\n"
-                                      "\n Sair:\n"
-                                      "    [ESC]", color, w, h);
+                                      "     Em X: [Ctrl+J] [Ctrl+L]\n"
+                                      "     Em Y: [Ctrl+I] [Ctrl+K]\n"
+                                      "     Em Z: [Ctrl+U] [Ctrl+H]\n"
+                                      "\n Seleciona objeto: [TAB]\n"
+                                      "\n Insere novo objeto: [INSERT]\n"
+                                      "\n Reseta objeto: [ENTER]\n"
+                                      "\n Apaga objeto: [DELETE]\n"
+                                      "\n Sair: [ESC]", color, w, h);
     TTF_CloseFont(fonte);
     return ajuda;
 }
@@ -62,7 +63,7 @@ void SProjecao(SDL_Renderer *render, int w)
      * Cria uma textura apartir da surface s.
      * Copia a textura para o render no canto superior direito da tela.
      */
-    SDL_Surface *s = TTF_RenderText_Solid(fonte, "Projecao em Y", cor);
+    SDL_Surface *s = TTF_RenderText_Solid(fonte, "Ponto de fuga em Y", cor);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
     SDL_Rect rect = {w - s->w, 0, s->w, s->h};
     SDL_RenderCopy(render, texture, NULL, &rect);
