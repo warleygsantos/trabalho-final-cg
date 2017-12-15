@@ -63,7 +63,7 @@ void SProjecao(SDL_Renderer *render, int w)
      * Cria uma textura apartir da surface s.
      * Copia a textura para o render no canto superior direito da tela.
      */
-    SDL_Surface *s = TTF_RenderText_Solid(fonte, "Ponto de fuga em Y", cor);
+    SDL_Surface *s = TTF_RenderText_Solid(fonte, "Ponto de fuga em Z", cor);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(render, s);
     SDL_Rect rect = {w - s->w, 0, s->w, s->h};
     SDL_RenderCopy(render, texture, NULL, &rect);
