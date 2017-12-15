@@ -32,7 +32,7 @@ class Objeto3D
 {
 public:
     void multiplica(double A[4][4], double B[4][4], double out[4][4]);
-    Objeto3D(std::string);
+    Objeto3D(std::string, int, int);
     std::vector<Ponto> pontos;
     std::vector<Linha> linhas;
     std::vector<std::vector<int>> faces;
@@ -46,6 +46,7 @@ public:
     void setEscalaEmX(double);
     void setEscalaEmY(double);
     void setEscalaEmZ(double);
+    void fugaZ(Ponto *);
     Ponto getPonto(int);
     virtual ~Objeto3D();
     double mTransformacoes[4][4] = {{1, 0, 0, 0},
@@ -56,6 +57,8 @@ public:
     double Tx = 0;
     double Ty = 0;
     double Tz = 0;
+    int W;
+    int H;
 protected:
 
 private:

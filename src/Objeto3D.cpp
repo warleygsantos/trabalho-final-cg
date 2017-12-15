@@ -36,7 +36,7 @@ void multMatriz(double A[][4], int ma, double B[][4], int mb, double C[][4])
  * \brief Realiza a projecao em Fuga em Z.
  * \param ponto Ponteiro para uma estrutura Ponto que representa um ponto.
  */
-void fugaZ(Ponto *ponto)
+void Objeto3D::fugaZ(Ponto *ponto)
 {
     double v[1][4];
     v[0][0] = ponto->x;
@@ -44,51 +44,25 @@ void fugaZ(Ponto *ponto)
     v[0][2] = ponto->z;
     v[0][3] = ponto->m;
 
-    double fx = 1366 / 2, fy = 768 / 2;
-    double fz = 1800.0;
-    double projMat[4][4] =
+    static double fx = (double) W / 2;
+    static double fy = (double) H / 2;
+    static double fz = 1200.0;
+    static double a = -1 / fz;
+
+    static double projecao[4][4] =
     {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, -1.0/fz},
-        {0, 0, 0, 1}
+        {     1,      0, 0, 0},
+        {     0,      1, 0, 0},
+        {fx * a, fy * a, 1, a},
+        {     0,      0, 0, 1},
     };
 
-    double mat[4][4] =
-    {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, 0},
-        {-fx, -fy, 0, 1},
-    };
-
-    multMatriz(mat, 4,projMat, 4,projMat);
-
-    double mat2[4][4] =
-    {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, 0},
-        {fx, fy, 0, 1},
-    };
-
-    multMatriz(projMat, 4,mat2, 4, projMat);
-    multMatriz(v, 1, projMat, 4, v);
+    multMatriz(v, 1, projecao, 4, v);
 
     ponto->x = v[0][0];
     ponto->y = v[0][1];
     ponto->z = v[0][2];
     ponto->m = v[0][3];
-}
-
-/**
- * \brief Responsavel por chamar a projecao de forma generica.
- * \param ponto Ponteiro para o ponto que se deseja projetar.
- * \param projecao Ponteiro para a funcao de projecao.
- */
-void projeta(Ponto *ponto, Projecao projecao)
-{
-    projecao(ponto);
 }
 
 /**
@@ -251,10 +225,12 @@ void Objeto3D::carregaObj(string path)
  * \brief Construtor para o objeto 3D.
  * \param path Diretorio\nome do arquivo de pontos e linhas.
  */
-Objeto3D::Objeto3D(string path)
+Objeto3D::Objeto3D(string path, int W, int H)
 {
     /* Carrega o arquivo com os pontos e linhas.                              */
     carregaObj(path);
+    this->W = W;
+    this->H = H;
 }
 
 Objeto3D::~Objeto3D()

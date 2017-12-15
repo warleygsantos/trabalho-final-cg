@@ -81,7 +81,7 @@ void changeObjeto3D(std::vector<Objeto3D *> *obj, int iObjeto)
 
 
     // obj->erase(obj->begin() + iObjeto);
-    (*obj).at(iObjeto) = new Objeto3D(escolha[0]);
+    (*obj).at(iObjeto) = new Objeto3D(escolha[0], DM.w, DM.h);
     /* Posiciona o novo objeto perto do centro da tela.                       */
     obj->at(iObjeto)->setTranslacaoEmX(DM.w/2);
     obj->at(iObjeto)->setTranslacaoEmY(DM.h/2);
@@ -191,7 +191,7 @@ bool handleEventKey(
         }
         else if(event->key.keysym.sym == SDLK_INSERT)
         {
-            (*obj).push_back(new Objeto3D(escolha[0]));
+            (*obj).push_back(new Objeto3D(escolha[0], DM.w, DM.h));
             /* Posiciona o novo objeto perto do centro da tela.                */
             obj->at(obj->size() -1)->setTranslacaoEmX(DM.w/2);
             obj->at(obj->size() -1)->setTranslacaoEmY(DM.h/2);
@@ -277,9 +277,9 @@ int main(int argc, char *argv[])
 
     std::vector<Objeto3D *> obj;
 
-    obj.push_back(new Objeto3D("objetos3D/quadrado.war"));
+    obj.push_back(new Objeto3D("objetos3D/quadrado.war", DM.w, DM.h));
     /* Instancia um objeto 3D e o posiciona perto do centro da tela.          */
-    obj.push_back(new Objeto3D("objetos3D/max.dat"));
+    obj.push_back(new Objeto3D("objetos3D/max.dat", DM.w, DM.h));
 
     obj.at(0)->setTranslacaoEmX(DM.w/2 + 50);
     obj.at(0)->setTranslacaoEmY(DM.h/2 + 50);
